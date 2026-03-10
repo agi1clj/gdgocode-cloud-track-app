@@ -1,0 +1,16 @@
+{
+  "name": "gdgocode-cloud-track-app",
+  "private": true,
+  "scripts": {
+    "setup": "node scripts/setup-workshop.mjs",
+    "dev": "docker compose --env-file frontend/.env up --build",
+    "db:migrate": "npm --prefix backend run db:migrate",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm --prefix frontend run check && npm --prefix backend run check",
+    "build": "npm --prefix frontend run build && npm --prefix backend run build"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}

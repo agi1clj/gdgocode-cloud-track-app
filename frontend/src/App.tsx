@@ -1,0 +1,410 @@
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import {
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Divider,
+  Stack,
+  Typography
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import { DashboardHero } from "./components/DashboardHero";
+import { InsightPanels } from "./components/InsightPanels";
+import { ReadingsSection } from "./components/ReadingsSection";
+import { StatCard } from "./components/StatCard";
+import { DashboardControls } from "./components/DashboardControls";
+import { LineChart } from "./components/LineChart";
+import { ZoneBarChart } from "./components/ZoneBarChart";
+import { EVENT_NAME } from "./config";
+import {
+  clearReadings,
+  fetchReadings,
+  logClientError,
+  seedReadings
+} from "./lib/api";
+import {
+  consumptionSeries,
+  dashboardScopeOptions,
+  deliverySignals,
+  summarizeReadings,
+  topZones
+} from "./lib/dashboard";
+import { formatOneDecimal, formatShortDateTime } from "./lib/formatters";
+import type {
+  ActionState,
+  ReadingsResponse,
+  Reading,
+  StatCardDefinition
+} from "./types";
+
+function App() {
+  const [data, setData] = useState<ReadingsResponse | null>(null);
+  const [loadingState, setLoadingState] = useState<ActionState>("loading");
+  const [seedingState, setSeedingState] = useState<ActionState>("idle");
+  const [resettingState, setResettingState] = useState<ActionState>("idle");
+  const [scope, setScope] = useState("all");
+  const [error, setError] = useState<string | null>(null);
+
+  async function loadReadings() {
+    setLoadingState("loading");
+    setError(null);
+
+    try {
+      const payload = await fetchReadings();
+      setData(payload);
+      setLoadingState("success");
+    } catch (loadError) {
+      logClientError("Failed to load readings", loadError);
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : "Unknown frontend error."
+      );
+      setLoadingState("idle");
+    }
+  }
+
+  async function handleSeedData() {
+    setSeedingState("loading");
+    setError(null);
+
+    try {
+      await seedReadings();
+      setSeedingState("success");
+      await loadReadings();
+    } catch (seedError) {
+      logClientError("Failed to seed readings", seedError);
+      setError(
+        seedError instanceof Error ? seedError.message : "Unknown seed error."
+      );
+      setSeedingState("idle");
+    }
+  }
+
+  async function handleResetData() {
+    setResettingState("loading");
+    setError(null);
+
+    try {
+      await clearReadings();
+      setResettingState("success");
+      await loadReadings();
+    } catch (resetError) {
+      logClientError("Failed to clear readings", resetError);
+      setError(
+        resetError instanceof Error
+          ? resetError.message
+          : "Unknown reset error."
+      );
+      setResettingState("idle");
+    }
+  }
+
+  useEffect(() => {
+    void loadReadings();
+  }, []);
+
+  useLayoutEffect(() => {
+    document.title = "Cluj-Napoca AQI Dashboard";
+  });
+
+  const readings = data?.readings ?? [];
+  const scopeOptions = useMemo(
+    () => dashboardScopeOptions(readings),
+    [readings]
+  );
+  const filteredReadings = useMemo(
+    () =>
+      scope === "all"
+        ? readings
+        : readings.filter((reading: Reading) => reading.zone === scope),
+    [readings, scope]
+  );
+
+  useEffect(() => {
+    if (!scopeOptions.some((option) => option.value === scope)) {
+      setScope("all");
+    }
+  }, [scope, scopeOptions]);
+
+  const summary = useMemo(
+    () => summarizeReadings(filteredReadings),
+    [filteredReadings]
+  );
+  const latestTimestamp = filteredReadings.at(-1)?.recordedAt;
+  const lastUpdatedLabel = latestTimestamp
+    ? `Updated ${formatShortDateTime(latestTimestamp)}`
+    : "No readings yet";
+
+  const stats = useMemo<StatCardDefinition[]>(
+    () => [
+      {
+        label: "Sensor samples",
+        value: String(summary.readingCount ?? 0),
+        meta:
+          loadingState === "loading"
+            ? "Refreshing the latest AQI batch"
+            : scope === "all"
+              ? "Captured across monitored Cluj zones"
+              : `${scope} monitoring rows`,
+        tone: "blue"
+      },
+      {
+        label: "Avg AQI",
+        value: formatOneDecimal(summary.averageAirQualityIndex ?? 0),
+        meta:
+          scope === "all" ? "AQI across all monitored zones" : `${scope} AQI`,
+        tone: "red"
+      },
+      {
+        label: "PM2.5 average",
+        value: formatOneDecimal(
+          filteredReadings.reduce((sum, item) => sum + item.pm25, 0) /
+            Math.max(filteredReadings.length, 1)
+        ),
+        meta: "Average PM2.5 ug/m3",
+        tone: "green"
+      },
+      {
+        label: "Peak zone",
+        value: summary.peakZone ?? "No data",
+        meta:
+          summary.readingCount > 0
+            ? `Highest recorded AQI ${formatOneDecimal(summary.peakAirQualityIndex)}`
+            : "Load a scenario first",
+        tone: "yellow"
+      }
+    ],
+    [filteredReadings, loadingState, scope, summary]
+  );
+
+  const spotlightZones = useMemo(
+    () => topZones(filteredReadings),
+    [filteredReadings]
+  );
+  const timeSeries = useMemo(
+    () => consumptionSeries(filteredReadings),
+    [filteredReadings]
+  );
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        py: { xs: 3, md: 4 },
+        background: `
+          radial-gradient(circle at top left, rgba(66, 133, 244, 0.08), transparent 22%),
+          radial-gradient(circle at top right, rgba(56, 142, 60, 0.07), transparent 20%),
+          linear-gradient(180deg, #ffffff 0%, #fbfdff 42%, #ffffff 100%)
+        `
+      }}
+    >
+      <Container maxWidth="xl">
+        <Box component="main" sx={{ display: "grid", gap: { xs: 2, md: 2.5 } }}>
+          <DashboardHero
+            deliverySignals={deliverySignals}
+            summary={summary}
+            lastUpdatedLabel={lastUpdatedLabel}
+            scope={scope}
+          />
+
+          {error ? <Alert severity="error">{error}</Alert> : null}
+
+          <DashboardControls
+            loadingState={loadingState}
+            seedingState={seedingState}
+            resettingState={resettingState}
+            scope={scope}
+            scopeOptions={scopeOptions}
+            lastUpdatedLabel={lastUpdatedLabel}
+            onSeed={() => {
+              void handleSeedData();
+            }}
+            onRefresh={() => {
+              void loadReadings();
+            }}
+            onReset={() => {
+              void handleResetData();
+            }}
+            onScopeChange={setScope}
+          />
+
+          <Box
+            component="section"
+            sx={{
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: {
+                xs: "repeat(2, minmax(0, 1fr))",
+                xl: "repeat(4, minmax(0, 1fr))"
+              }
+            }}
+          >
+            {stats.map((stat) => (
+              <StatCard key={stat.label} {...stat} />
+            ))}
+          </Box>
+
+          <Box
+            component="section"
+            sx={{
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: {
+                xs: "1fr",
+                xl: "minmax(0, 1.15fr) minmax(300px, 0.85fr)"
+              },
+              alignItems: "start"
+            }}
+          >
+            <Box
+              sx={{
+                display: "grid",
+                gap: 2,
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  lg: "minmax(0, 1.3fr) minmax(0, 0.9fr)"
+                }
+              }}
+            >
+              <LineChart points={timeSeries} />
+              <ZoneBarChart zones={spotlightZones} />
+            </Box>
+
+            <Stack spacing={2}>
+              <Box
+                sx={{
+                  px: { xs: 0, md: 1 },
+                  display: { xs: "none", xl: "block" }
+                }}
+              >
+                <Typography
+                  variant="overline"
+                  color="text.secondary"
+                  sx={{ fontWeight: 700 }}
+                >
+                  Monitoring Overview
+                </Typography>
+                <Typography
+                  variant="h4"
+                  sx={{ maxWidth: { xs: "none", md: "14ch" } }}
+                >
+                  City status at a glance.
+                </Typography>
+              </Box>
+              <InsightPanels
+                readings={filteredReadings}
+                spotlightZones={spotlightZones}
+              />
+            </Stack>
+          </Box>
+
+          <ReadingsSection
+            loadingState={loadingState}
+            readings={filteredReadings}
+          />
+
+          <Card
+            component="section"
+            sx={{
+              background:
+                "linear-gradient(180deg, rgba(66,133,244,0.04) 0%, rgba(255,255,255,1) 100%)"
+            }}
+          >
+            <CardContent>
+              <Box
+                sx={{
+                  display: "grid",
+                  gap: 3,
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    lg: "minmax(0, 1.2fr) minmax(320px, 0.8fr)"
+                  }
+                }}
+              >
+                <Stack spacing={1.5}>
+                  <Typography
+                    variant="overline"
+                    color="text.secondary"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    About This Build
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{ fontSize: { xs: "1.35rem", md: "1.5rem" } }}
+                  >
+                    Built to present a believable AQI monitoring product.
+                  </Typography>
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      maxWidth: "68ch",
+                      display: { xs: "none", sm: "block" }
+                    }}
+                  >
+                    Cluj-Napoca AQI trends, neighborhood hotspots, PM2.5
+                    exposure, and timestamped observations in one clean
+                    monitoring view.
+                  </Typography>
+                  <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                    <Chip
+                      label={EVENT_NAME}
+                      color="primary"
+                      variant="outlined"
+                    />
+                    <Chip
+                      label="Google Cloud workshop build"
+                      color="secondary"
+                      variant="outlined"
+                    />
+                    <Chip label="Cluj-Napoca AQI" variant="outlined" />
+                  </Stack>
+                </Stack>
+
+                <Box
+                  sx={{
+                    p: 2.5,
+                    borderRadius: 4,
+                    bgcolor: "transparent",
+                    border: `1px solid ${alpha("#4285F4", 0.1)}`
+                  }}
+                >
+                  <Stack spacing={2}>
+                    <Typography variant="overline" sx={{ fontWeight: 700 }}>
+                      Sponsor
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src="/RebelDot-logo-small.png"
+                        alt="RebelDot logo"
+                        sx={{ width: "100%", maxWidth: 220, height: "auto" }}
+                      />
+                    </Box>
+                    <Divider />
+                    <Typography color="text.secondary">
+                      RebelDot supported the GDGoCode 2026 Cloud Track delivery
+                      environment.
+                    </Typography>
+                  </Stack>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
+    </Box>
+  );
+}
+
+export default App;
