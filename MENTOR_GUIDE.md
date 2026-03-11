@@ -4,7 +4,7 @@ Mentor runbook for the GDGoCode 2026 Cloud Track.
 
 Related repos:
 
-- app repo: [gdgocode-cloud-track-app](.)
+- app repo: [gdgocode-cloud-track-app](https://github.com/agi1clj/gdgocode-cloud-track-app)
 - infra repo: [gdgocode-cloud-track-infra](https://github.com/agi1clj/gdgocode-cloud-track-infra)
 
 ## What mentors verify first
