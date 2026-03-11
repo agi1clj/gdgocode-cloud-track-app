@@ -22,9 +22,16 @@ npm run setup
 npm run dev
 ```
 
+`npm run dev` runs:
+
+```bash
+docker compose --env-file frontend/.env up --build
+```
+
 Open:
 
 - frontend: `http://localhost:3000`
+- backend root: `http://localhost:3001/`
 - backend health: `http://localhost:3001/api/health`
 - Swagger UI: `http://localhost:3001/docs`
 
@@ -92,6 +99,8 @@ Frontend template:
 
 Important defaults:
 
+- Docker Compose reads frontend variables from `frontend/.env`
+- the backend container reads backend variables from `backend/.env`
 - backend DB host is `postgres` for Docker Compose
 - frontend API base URL is `http://localhost:3001`
 - backend runs migrations automatically on startup
@@ -118,6 +127,7 @@ Frontend:
 
 Main endpoints:
 
+- `GET /`
 - `GET /api/health`
 - `GET /api/readings`
 - `POST /api/readings/seed`

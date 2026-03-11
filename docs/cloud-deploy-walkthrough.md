@@ -76,9 +76,16 @@ npm run build
 npm run dev
 ```
 
+If you want the exact local Docker Compose command, it is:
+
+```bash
+docker compose --env-file frontend/.env up --build
+```
+
 Verify:
 
 - `http://localhost:3000`
+- `http://localhost:3001/`
 - `http://localhost:3001/api/health`
 - `http://localhost:3001/docs`
 
@@ -358,6 +365,7 @@ Also check the app repo Actions page:
 
 - confirm `Publish Docker Images` is green
 - confirm the pushed commit SHA matches the image tag in `terraform.tfvars`
+- confirm the Docker Hub repos in the workflow output match the image refs in `terraform.tfvars`
 
 ## 14. What the infra is doing for you
 

@@ -114,7 +114,7 @@ Manual verification:
 ## Common deployment mistakes
 
 - wrong GCP project selected
-- required APIs not enabled
+- insufficient project permissions for `tofu apply`
 - GitHub Actions did not publish the images
 - wrong image tag in `terraform.tfvars`
 - wrong Docker Hub username in GitHub secrets
