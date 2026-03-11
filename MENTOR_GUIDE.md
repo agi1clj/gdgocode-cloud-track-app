@@ -82,7 +82,7 @@ Red flags:
 Manual verification:
 
 1. open `/docs`
-2. call `GET /api/readings`
+2. call `GET /api/events`
 3. confirm the new field is present when expected
 4. open the frontend dashboard
 5. confirm the UI renders without missing data or runtime errors

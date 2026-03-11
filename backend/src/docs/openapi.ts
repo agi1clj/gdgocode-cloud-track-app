@@ -9,7 +9,7 @@ extendZodWithOpenApi(z);
 
 const registry = new OpenAPIRegistry();
 
-const readingSchema = z
+const eventSchema = z
   .object({
     id: z.number().int().openapi({ example: 1 }),
     sector: z.string().openapi({ example: "Oradea North" }),
@@ -22,14 +22,14 @@ const readingSchema = z
       example: "WATCH"
     })
   })
-  .openapi("Reading");
+  .openapi("Event");
 
 const summarySchema = z
   .object({
     averagePerimeterIndex: z.number().openapi({ example: 46.3 }),
     peakSector: z.string().openapi({ example: "Cluj Hub" }),
     peakPerimeterIndex: z.number().openapi({ example: 82 }),
-    readingCount: z.number().int().openapi({ example: 6 })
+    eventCount: z.number().int().openapi({ example: 6 })
   })
   .openapi("Summary");
 
@@ -43,13 +43,13 @@ const healthResponseSchema = z
   })
   .openapi("HealthResponse");
 
-const readingsResponseSchema = z
+const eventsResponseSchema = z
   .object({
-    readings: z.array(readingSchema),
+    events: z.array(eventSchema),
     summary: summarySchema,
     readOnly: z.boolean().openapi({ example: true })
   })
-  .openapi("ReadingsResponse");
+  .openapi("EventsResponse");
 
 const readOnlyErrorSchema = z
   .object({
@@ -73,7 +73,7 @@ const seedResponseSchema = z
   .object({
     inserted: z.number().int().openapi({ example: 6 })
   })
-  .openapi("SeedReadingsResponse");
+  .openapi("SeedEventsResponse");
 
 registry.registerPath({
   method: "get",
@@ -94,15 +94,15 @@ registry.registerPath({
 
 registry.registerPath({
   method: "get",
-  path: "/api/readings",
-  tags: ["Readings"],
+  path: "/api/events",
+  tags: ["Events"],
   summary: "List perimeter events and operational summary data",
   responses: {
     200: {
       description: "Perimeter events returned successfully",
       content: {
         "application/json": {
-          schema: readingsResponseSchema
+          schema: eventsResponseSchema
         }
       }
     }
@@ -111,8 +111,8 @@ registry.registerPath({
 
 registry.registerPath({
   method: "post",
-  path: "/api/readings/seed",
-  tags: ["Readings"],
+  path: "/api/events/seed",
+  tags: ["Events"],
   summary: "Seed the perimeter scenario event dataset",
   responses: {
     201: {
@@ -136,8 +136,8 @@ registry.registerPath({
 
 registry.registerPath({
   method: "delete",
-  path: "/api/readings",
-  tags: ["Readings"],
+  path: "/api/events",
+  tags: ["Events"],
   summary: "Clear all perimeter events",
   responses: {
     204: {
@@ -172,7 +172,7 @@ export const openApiDocument = generator.generateDocument({
   ],
   tags: [
     { name: "Health", description: "Service and database health" },
-    { name: "Readings", description: "Perimeter event data and seed flow" }
+    { name: "Events", description: "Perimeter event data and seed flow" }
   ]
 });
 

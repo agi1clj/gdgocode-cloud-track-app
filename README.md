@@ -135,8 +135,8 @@ Backend:
 
 - [app.ts](backend/src/app.ts)
 - [index.ts](backend/src/index.ts)
-- [routes/readings.ts](backend/src/routes/readings.ts)
-- [services/readings.ts](backend/src/services/readings.ts)
+- [routes/events.ts](backend/src/routes/events.ts)
+- [services/events.ts](backend/src/services/events.ts)
 - [migrations.ts](backend/src/migrations.ts)
 
 Frontend:
@@ -145,7 +145,7 @@ Frontend:
 - [DashboardHero.tsx](frontend/src/components/DashboardHero.tsx)
 - [DashboardControls.tsx](frontend/src/components/DashboardControls.tsx)
 - [SectorBarChart.tsx](frontend/src/components/SectorBarChart.tsx)
-- [ReadingsSection.tsx](frontend/src/components/ReadingsSection.tsx)
+- [EventsSection.tsx](frontend/src/components/EventsSection.tsx)
 - [perimeter.ts](frontend/src/lib/perimeter.ts)
 - [config.ts](frontend/src/config.ts)
 
@@ -155,9 +155,9 @@ Main endpoints:
 
 - `GET /`
 - `GET /api/health`
-- `GET /api/readings`
-- `POST /api/readings/seed`
-- `DELETE /api/readings`
+- `GET /api/events`
+- `POST /api/events/seed`
+- `DELETE /api/events`
 
 Docs endpoints:
 

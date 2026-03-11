@@ -49,11 +49,11 @@ export function DashboardHero({
     {
       tone: "green",
       label: "Latest batch",
-      value: `${summary.readingCount} events`
+      value: `${summary.eventCount} events`
     },
     {
       tone: "red",
-      label: "Peak sector",
+      label: "Peak event",
       value: summary.peakSector
     }
   ] as const;

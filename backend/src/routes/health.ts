@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getDatabaseTime } from "../services/readings.js";
+import { getDatabaseTime } from "../services/events.js";
 
 export const healthRouter = Router();
 healthRouter.get("/", async (_request, response) => {

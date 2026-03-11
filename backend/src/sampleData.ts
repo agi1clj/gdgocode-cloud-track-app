@@ -1,4 +1,4 @@
-export const sampleReadings = [
+export const sampleEvents = [
   {
     sector: "Oradea North",
     recordedAt: "2026-03-13T18:00:00Z",

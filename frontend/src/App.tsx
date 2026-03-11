@@ -12,18 +12,18 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { DashboardHero } from "./components/DashboardHero";
+import { EventsSection } from "./components/EventsSection";
 import { InsightPanels } from "./components/InsightPanels";
-import { ReadingsSection } from "./components/ReadingsSection";
 import { StatCard } from "./components/StatCard";
 import { DashboardControls } from "./components/DashboardControls";
 import { LineChart } from "./components/LineChart";
 import { SectorBarChart } from "./components/SectorBarChart";
 import { getEventName } from "./config";
 import {
-  clearReadings,
-  fetchReadings,
+  clearEvents,
+  fetchEvents,
   logClientError,
-  seedReadings
+  seedEvents
 } from "./lib/api";
 import { deliverySignals } from "./lib/dashboard";
 import {
@@ -32,36 +32,36 @@ import {
   criticalSectors,
   perimeterScopeOptions,
   perimeterSeries,
-  summarizeReadings,
+  summarizeEvents,
   topSectors
 } from "./lib/perimeter";
 import { formatOneDecimal, formatShortDateTime } from "./lib/formatters";
 import type {
   ActionState,
-  Reading,
-  ReadingsResponse,
+  Event,
+  EventsResponse,
   StatCardDefinition
 } from "./types";
 
 function App() {
   const eventName = getEventName();
-  const [data, setData] = useState<ReadingsResponse | null>(null);
+  const [data, setData] = useState<EventsResponse | null>(null);
   const [loadingState, setLoadingState] = useState<ActionState>("loading");
   const [seedingState, setSeedingState] = useState<ActionState>("idle");
   const [resettingState, setResettingState] = useState<ActionState>("idle");
   const [scope, setScope] = useState("all");
   const [error, setError] = useState<string | null>(null);
 
-  async function loadReadings() {
+  async function loadEvents() {
     setLoadingState("loading");
     setError(null);
 
     try {
-      const payload = await fetchReadings();
+      const payload = await fetchEvents();
       setData(payload);
       setLoadingState("success");
     } catch (loadError) {
-      logClientError("Failed to load readings", loadError);
+      logClientError("Failed to load events", loadError);
       setError(
         loadError instanceof Error
           ? loadError.message
@@ -76,11 +76,11 @@ function App() {
     setError(null);
 
     try {
-      await seedReadings();
+      await seedEvents();
       setSeedingState("success");
-      await loadReadings();
+      await loadEvents();
     } catch (seedError) {
-      logClientError("Failed to seed readings", seedError);
+      logClientError("Failed to seed events", seedError);
       setError(
         seedError instanceof Error ? seedError.message : "Unknown seed error."
       );
@@ -93,11 +93,11 @@ function App() {
     setError(null);
 
     try {
-      await clearReadings();
+      await clearEvents();
       setResettingState("success");
-      await loadReadings();
+      await loadEvents();
     } catch (resetError) {
-      logClientError("Failed to clear readings", resetError);
+      logClientError("Failed to clear events", resetError);
       setError(
         resetError instanceof Error
           ? resetError.message
@@ -108,25 +108,22 @@ function App() {
   }
 
   useEffect(() => {
-    void loadReadings();
+    void loadEvents();
   }, []);
 
   useLayoutEffect(() => {
     document.title = "Perimeter Watch";
   });
 
-  const readings = data?.readings ?? [];
+  const events = data?.events ?? [];
   const readOnly = data?.readOnly ?? true;
-  const scopeOptions = useMemo(
-    () => perimeterScopeOptions(readings),
-    [readings]
-  );
-  const filteredReadings = useMemo(
+  const scopeOptions = useMemo(() => perimeterScopeOptions(events), [events]);
+  const filteredEvents = useMemo(
     () =>
       scope === "all"
-        ? readings
-        : readings.filter((reading: Reading) => reading.sector === scope),
-    [readings, scope]
+        ? events
+        : events.filter((event: Event) => event.sector === scope),
+    [events, scope]
   );
 
   useEffect(() => {
@@ -136,10 +133,10 @@ function App() {
   }, [scope, scopeOptions]);
 
   const summary = useMemo(
-    () => summarizeReadings(filteredReadings),
-    [filteredReadings]
+    () => summarizeEvents(filteredEvents),
+    [filteredEvents]
   );
-  const latestTimestamp = filteredReadings.at(-1)?.recordedAt;
+  const latestTimestamp = filteredEvents.at(-1)?.recordedAt;
   const lastUpdatedLabel = latestTimestamp
     ? `Updated ${formatShortDateTime(latestTimestamp)}`
     : "No events yet";
@@ -148,7 +145,7 @@ function App() {
     () => [
       {
         label: "Sensor events",
-        value: String(summary.readingCount ?? 0),
+        value: String(summary.eventCount ?? 0),
         meta:
           loadingState === "loading"
             ? "Refreshing latest events"
@@ -165,30 +162,30 @@ function App() {
       },
       {
         label: "Avg incidents",
-        value: formatOneDecimal(averageIncidentCount(filteredReadings)),
+        value: formatOneDecimal(averageIncidentCount(filteredEvents)),
         meta: "Average incidents per event",
         tone: "green"
       },
       {
-        label: "Peak sector",
+        label: "Peak event sector",
         value: summary.peakSector ?? "No data",
         meta:
-          summary.readingCount > 0
-            ? `Peak index ${formatOneDecimal(summary.peakPerimeterIndex)}`
+          summary.eventCount > 0
+            ? `Highest single-event index ${formatOneDecimal(summary.peakPerimeterIndex)}`
             : "Load a scenario first",
         tone: "yellow"
       }
     ],
-    [filteredReadings, loadingState, scope, summary]
+    [filteredEvents, loadingState, scope, summary]
   );
 
   const spotlightSectors = useMemo(
-    () => topSectors(filteredReadings),
-    [filteredReadings]
+    () => topSectors(filteredEvents),
+    [filteredEvents]
   );
   const timeSeries = useMemo(
-    () => perimeterSeries(filteredReadings),
-    [filteredReadings]
+    () => perimeterSeries(filteredEvents),
+    [filteredEvents]
   );
 
   return (
@@ -217,8 +214,8 @@ function App() {
             summary={summary}
             lastUpdatedLabel={lastUpdatedLabel}
             scope={scope}
-            criticalCount={criticalSectorCount(filteredReadings)}
-            criticalSectors={criticalSectors(filteredReadings)}
+            criticalCount={criticalSectorCount(filteredEvents)}
+            criticalSectors={criticalSectors(filteredEvents)}
           />
 
           {error ? <Alert severity="error">{error}</Alert> : null}
@@ -241,7 +238,7 @@ function App() {
               void handleSeedData();
             }}
             onRefresh={() => {
-              void loadReadings();
+              void loadEvents();
             }}
             onReset={() => {
               void handleResetData();
@@ -316,16 +313,13 @@ function App() {
                 </Typography>
               </Box>
               <InsightPanels
-                readings={filteredReadings}
+                events={filteredEvents}
                 spotlightSectors={spotlightSectors}
               />
             </Stack>
           </Box>
 
-          <ReadingsSection
-            loadingState={loadingState}
-            readings={filteredReadings}
-          />
+          <EventsSection loadingState={loadingState} events={filteredEvents} />
 
           <Card
             component="section"

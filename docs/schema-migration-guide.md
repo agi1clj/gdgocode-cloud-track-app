@@ -17,7 +17,7 @@ Today the main monitoring dataset looks like this:
 - table: `gdgocode_perimeter_readings`
 - migration source: `backend/src/migrations/001_init_perimeter_monitoring_schema.sql`
 - backend row model: `backend/src/types.ts`
-- backend service logic: `backend/src/services/readings.ts`
+- backend service logic: `backend/src/services/events.ts`
 - OpenAPI schema: `backend/src/docs/openapi.ts`
 - frontend response types: `frontend/src/types.ts`
 - frontend fetch layer: `frontend/src/lib/api.ts`
@@ -61,7 +61,7 @@ Update `backend/src/types.ts`.
 Before:
 
 ```ts
-export interface ReadingRow {
+export interface EventRow {
   id: number;
   sector: string;
   recorded_at: string;
@@ -74,7 +74,7 @@ export interface ReadingRow {
 After:
 
 ```ts
-export interface ReadingRow {
+export interface EventRow {
   id: number;
   sector: string;
   recorded_at: string;
@@ -85,22 +85,22 @@ export interface ReadingRow {
 }
 ```
 
-Do the same for the API-facing `Reading` interface in the same file.
+Do the same for the API-facing `Event` interface in the same file.
 
 ## 3. Update service queries and mapping
 
-Update `backend/src/services/readings.ts`.
+Update `backend/src/services/events.ts`.
 
 There are usually three places to change:
 
-1. `mapReading()`
+1. `mapEvent()`
 2. `SELECT` statements
 3. `INSERT` statements for seeding
 
 Example:
 
 ```ts
-function mapReading(row: ReadingRow): Reading {
+function mapEvent(row: EventRow): Event {
   return {
     id: row.id,
     sector: row.sector,
@@ -115,8 +115,8 @@ function mapReading(row: ReadingRow): Reading {
 
 Also update:
 
-- selected columns in `listReadings()`
-- inserted columns in `seedReadings()`
+- selected columns in `listEvents()`
+- inserted columns in `seedEvents()`
 - inserted values and placeholder count if seeding changed
 
 ## 4. Update the OpenAPI schema
@@ -125,9 +125,9 @@ Update `backend/src/docs/openapi.ts` so `/docs` and `/openapi.json` stay correct
 
 If the response shape changed, document the new property under:
 
-- `components.schemas.Reading`
+- `components.schemas.Event`
 - `components.schemas.Summary`
-- `components.schemas.ReadingsResponse`
+- `components.schemas.EventsResponse`
 
 ## 5. Update the frontend contract
 
@@ -139,7 +139,7 @@ If the backend response changed, update:
 
 Typical examples:
 
-- new table column in `ReadingsSection.tsx`
+- new table column in `EventsSection.tsx`
 - new stat card in `App.tsx`
 - new chart input in `LineChart.tsx` or `SectorBarChart.tsx`
 
@@ -171,7 +171,7 @@ npm run build
 Then verify manually:
 
 1. open `/docs`
-2. call `GET /api/readings`
+2. call `GET /api/events`
 3. confirm the new field is present
 4. open the frontend dashboard
 5. confirm the UI renders without missing data or runtime errors
@@ -186,7 +186,7 @@ You need to update:
 
 - new SQL migration with `ALTER TABLE ... RENAME COLUMN ...`
 - `backend/src/types.ts`
-- `backend/src/services/readings.ts`
+- `backend/src/services/events.ts`
 - `backend/src/docs/openapi.ts`
 - `frontend/src/types.ts`
 - `frontend/src/lib/perimeter.ts`
@@ -201,7 +201,7 @@ You do not need a schema migration if the value is computed only in code.
 You do need to update:
 
 - `backend/src/types.ts`
-- `backend/src/services/readings.ts` in `buildSummary()`
+- `backend/src/services/events.ts` in `buildSummary()`
 - `backend/src/docs/openapi.ts`
 - `frontend/src/types.ts`
 - UI that displays the new summary field
@@ -213,8 +213,8 @@ Treat this as an API refactor, not just a SQL change.
 Minimum backend areas to update:
 
 - new SQL migration files
-- `backend/src/services/readings.ts` queries
-- seed logic in `backend/src/sampleData.ts` and `seedReadings()`
+- `backend/src/services/events.ts` queries
+- seed logic in `backend/src/sampleData.ts` and `seedEvents()`
 - API response types in `backend/src/types.ts`
 - OpenAPI docs in `backend/src/docs/openapi.ts`
 

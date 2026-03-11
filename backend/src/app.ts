@@ -5,8 +5,8 @@ import swaggerUi from "swagger-ui-express";
 import { openApiDocument } from "./docs/openapi.js";
 import { getErrorMessage, getErrorStack, logError, logInfo } from "./logger.js";
 import { apiRateLimit } from "./middleware/rateLimit.js";
+import { eventsRouter } from "./routes/events.js";
 import { healthRouter } from "./routes/health.js";
-import { readingsRouter } from "./routes/readings.js";
 
 export function createApp() {
   const app = express();
@@ -82,7 +82,7 @@ export function createApp() {
   );
 
   app.use("/api/health", healthRouter);
-  app.use("/api/readings", readingsRouter);
+  app.use("/api/events", eventsRouter);
 
   app.use((request, response) => {
     response.status(404).json({

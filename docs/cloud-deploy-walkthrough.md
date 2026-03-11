@@ -221,7 +221,7 @@ After `tofu apply`, check:
 2. the backend root URL returns `200`
 3. `/api/health` returns `ok`
 4. `/docs` and `/openapi.json` load
-5. `GET /api/readings` returns `readOnly: true` if you deployed read-only mode
+5. `GET /api/events` returns `readOnly: true` if you deployed read-only mode
 6. the dashboard loads the perimeter view without runtime errors
 
 If you deployed writable mode for a demo:

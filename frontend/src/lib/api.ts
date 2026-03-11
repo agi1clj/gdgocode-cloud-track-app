@@ -1,5 +1,5 @@
 import { getApiBaseUrl } from "../config";
-import type { ReadingsResponse } from "../types";
+import type { EventsResponse } from "../types";
 
 export async function parseApiError(
   response: Response,
@@ -22,8 +22,8 @@ export function logClientError(message: string, error: unknown) {
   });
 }
 
-export async function fetchReadings() {
-  const response = await fetch(`${getApiBaseUrl()}/api/readings`);
+export async function fetchEvents() {
+  const response = await fetch(`${getApiBaseUrl()}/api/events`);
 
   if (!response.ok) {
     throw new Error(
@@ -31,11 +31,11 @@ export async function fetchReadings() {
     );
   }
 
-  return (await response.json()) as ReadingsResponse;
+  return (await response.json()) as EventsResponse;
 }
 
-export async function seedReadings() {
-  const response = await fetch(`${getApiBaseUrl()}/api/readings/seed`, {
+export async function seedEvents() {
+  const response = await fetch(`${getApiBaseUrl()}/api/events/seed`, {
     method: "POST"
   });
 
@@ -46,8 +46,8 @@ export async function seedReadings() {
   }
 }
 
-export async function clearReadings() {
-  const response = await fetch(`${getApiBaseUrl()}/api/readings`, {
+export async function clearEvents() {
+  const response = await fetch(`${getApiBaseUrl()}/api/events`, {
     method: "DELETE"
   });
 

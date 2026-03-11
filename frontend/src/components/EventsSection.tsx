@@ -16,17 +16,14 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { formatDateTime, formatOneDecimal } from "../lib/formatters";
-import type { ActionState, Reading } from "../types";
+import type { ActionState, Event } from "../types";
 
-type ReadingsSectionProps = {
+type EventsSectionProps = {
   loadingState: ActionState;
-  readings: Reading[];
+  events: Event[];
 };
 
-export function ReadingsSection({
-  loadingState,
-  readings
-}: ReadingsSectionProps) {
+export function EventsSection({ loadingState, events }: EventsSectionProps) {
   const statusTone = (status: string) => {
     switch (status.toUpperCase()) {
       case "NORMAL":
@@ -96,7 +93,7 @@ export function ReadingsSection({
                   label={
                     loadingState === "loading"
                       ? "Loading"
-                      : `${readings.length} events`
+                      : `${events.length} events`
                   }
                   color="warning"
                   variant="outlined"
@@ -125,7 +122,7 @@ export function ReadingsSection({
                 <Skeleton key={index} variant="rounded" height={52} />
               ))}
             </Stack>
-          ) : readings.length === 0 ? (
+          ) : events.length === 0 ? (
             <Box
               sx={{
                 p: 3,
@@ -147,24 +144,24 @@ export function ReadingsSection({
                   gap: 1.25
                 }}
               >
-                {readings.map((reading) => (
+                {events.map((event) => (
                   <Box
-                    key={reading.id}
+                    key={event.id}
                     sx={{
                       px: 2.5,
                       py: 2.1,
                       borderRadius: 4,
                       border: "1px solid",
                       borderColor:
-                        reading.status === "CRITICAL"
+                        event.status === "CRITICAL"
                           ? alpha("#D95040", 0.34)
                           : "divider",
                       bgcolor:
-                        reading.status === "CRITICAL"
+                        event.status === "CRITICAL"
                           ? alpha("#D95040", 0.05)
                           : alpha("#fff", 0.94),
                       boxShadow:
-                        reading.status === "CRITICAL"
+                        event.status === "CRITICAL"
                           ? "0 0 0 1px rgba(217,80,64,0.05), 0 16px 32px rgba(217,80,64,0.08)"
                           : "none"
                     }}
@@ -180,14 +177,14 @@ export function ReadingsSection({
                       >
                         <Box sx={{ minWidth: 0 }}>
                           <Typography sx={{ fontWeight: 700 }}>
-                            {reading.sector}
+                            {event.sector}
                           </Typography>
                           <Typography
                             variant="body2"
                             color="text.secondary"
                             sx={{ mt: 0.25 }}
                           >
-                            {formatDateTime(reading.recordedAt)}
+                            {formatDateTime(event.recordedAt)}
                           </Typography>
                         </Box>
                         <Box
@@ -198,15 +195,15 @@ export function ReadingsSection({
                             px: 1.25,
                             py: 0.5,
                             borderRadius: 999,
-                            bgcolor: statusTone(reading.status).bg,
-                            color: statusTone(reading.status).color,
+                            bgcolor: statusTone(event.status).bg,
+                            color: statusTone(event.status).color,
                             fontWeight: 700,
                             fontSize: "0.72rem",
                             letterSpacing: "0.04em",
                             whiteSpace: "nowrap"
                           }}
                         >
-                          {reading.status}
+                          {event.status}
                         </Box>
                       </Box>
 
@@ -222,7 +219,7 @@ export function ReadingsSection({
                             Index
                           </Typography>
                           <Typography sx={{ fontWeight: 700 }}>
-                            {formatOneDecimal(reading.perimeterIndex)}
+                            {formatOneDecimal(event.perimeterIndex)}
                           </Typography>
                         </Box>
                         <Box>
@@ -230,7 +227,7 @@ export function ReadingsSection({
                             Incidents
                           </Typography>
                           <Typography sx={{ fontWeight: 700 }}>
-                            {reading.incidentCount}
+                            {event.incidentCount}
                           </Typography>
                         </Box>
                       </Box>
@@ -279,34 +276,34 @@ export function ReadingsSection({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {readings.map((reading, index) => (
+                    {events.map((event, index) => (
                       <TableRow
-                        key={reading.id}
+                        key={event.id}
                         hover
                         sx={{
                           animationDelay: `${index * 70}ms`,
                           bgcolor:
-                            reading.status === "CRITICAL"
+                            event.status === "CRITICAL"
                               ? alpha("#D95040", 0.04)
                               : "transparent",
                           "&:hover": {
                             bgcolor:
-                              reading.status === "CRITICAL"
+                              event.status === "CRITICAL"
                                 ? alpha("#D95040", 0.08)
                                 : undefined
                           }
                         }}
                       >
                         <TableCell sx={{ fontWeight: 600 }}>
-                          {reading.sector}
+                          {event.sector}
                         </TableCell>
                         <TableCell>
-                          {formatDateTime(reading.recordedAt)}
+                          {formatDateTime(event.recordedAt)}
                         </TableCell>
                         <TableCell>
-                          {formatOneDecimal(reading.perimeterIndex)}
+                          {formatOneDecimal(event.perimeterIndex)}
                         </TableCell>
-                        <TableCell>{reading.incidentCount}</TableCell>
+                        <TableCell>{event.incidentCount}</TableCell>
                         <TableCell>
                           <Box
                             component="span"
@@ -315,14 +312,14 @@ export function ReadingsSection({
                               px: 1.25,
                               py: 0.5,
                               borderRadius: 999,
-                              bgcolor: statusTone(reading.status).bg,
-                              color: statusTone(reading.status).color,
+                              bgcolor: statusTone(event.status).bg,
+                              color: statusTone(event.status).color,
                               fontWeight: 700,
                               fontSize: "0.75rem",
                               letterSpacing: "0.04em"
                             }}
                           >
-                            {reading.status}
+                            {event.status}
                           </Box>
                         </TableCell>
                       </TableRow>

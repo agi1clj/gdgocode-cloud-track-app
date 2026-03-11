@@ -3,18 +3,18 @@ import { Box, Card, CardContent, Chip, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { statusSummary } from "../lib/perimeter";
 import { formatOneDecimal } from "../lib/formatters";
-import type { Reading, SectorTotal } from "../types";
+import type { Event, SectorTotal } from "../types";
 
 type InsightPanelsProps = {
-  readings: Reading[];
+  events: Event[];
   spotlightSectors: SectorTotal[];
 };
 
 export function InsightPanels({
-  readings,
+  events,
   spotlightSectors
 }: InsightPanelsProps) {
-  const statusBreakdown = statusSummary(readings);
+  const statusBreakdown = statusSummary(events);
   const statusCards = [
     { label: "Normal", value: statusBreakdown.NORMAL ?? 0, color: "#388E3C" },
     { label: "Watch", value: statusBreakdown.WATCH ?? 0, color: "#F2BD42" },

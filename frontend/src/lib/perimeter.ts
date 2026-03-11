@@ -1,25 +1,25 @@
 import type {
   DashboardScopeOption,
-  Reading,
+  Event,
   SectorTotal,
   Summary,
   TimeSeriesPoint
 } from "../types";
 
-export function statusSummary(readings: Reading[]) {
-  return readings.reduce<Record<string, number>>((accumulator, reading) => {
-    accumulator[reading.status] = (accumulator[reading.status] || 0) + 1;
+export function statusSummary(events: Event[]) {
+  return events.reduce<Record<string, number>>((accumulator, event) => {
+    accumulator[event.status] = (accumulator[event.status] || 0) + 1;
     return accumulator;
   }, {});
 }
 
-export function topSectors(readings: Reading[]): SectorTotal[] {
+export function topSectors(events: Event[]): SectorTotal[] {
   const totals = new Map<string, number>();
 
-  for (const reading of readings) {
+  for (const event of events) {
     totals.set(
-      reading.sector,
-      (totals.get(reading.sector) || 0) + reading.perimeterIndex
+      event.sector,
+      (totals.get(event.sector) || 0) + event.perimeterIndex
     );
   }
 
@@ -29,47 +29,43 @@ export function topSectors(readings: Reading[]): SectorTotal[] {
     .slice(0, 3);
 }
 
-export function perimeterSeries(readings: Reading[]): TimeSeriesPoint[] {
-  return readings.map((reading) => ({
-    label: new Date(reading.recordedAt).toLocaleTimeString("en-GB", {
+export function perimeterSeries(events: Event[]): TimeSeriesPoint[] {
+  return events.map((event) => ({
+    label: new Date(event.recordedAt).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: false
     }),
-    value: reading.perimeterIndex
+    value: event.perimeterIndex
   }));
 }
 
-export function summarizeReadings(readings: Reading[]): Summary {
-  const totalPerimeterIndex = readings.reduce(
+export function summarizeEvents(events: Event[]): Summary {
+  const totalPerimeterIndex = events.reduce(
     (sum, item) => sum + item.perimeterIndex,
     0
   );
 
-  const peakReading = readings.reduce<Reading | null>((peak, reading) => {
-    if (!peak || reading.perimeterIndex > peak.perimeterIndex) {
-      return reading;
+  const peakEvent = events.reduce<Event | null>((peak, event) => {
+    if (!peak || event.perimeterIndex > peak.perimeterIndex) {
+      return event;
     }
 
     return peak;
   }, null);
 
   return {
-    averagePerimeterIndex: readings.length
-      ? totalPerimeterIndex / readings.length
+    averagePerimeterIndex: events.length
+      ? totalPerimeterIndex / events.length
       : 0,
-    peakSector: peakReading?.sector ?? "No data",
-    peakPerimeterIndex: peakReading?.perimeterIndex ?? 0,
-    readingCount: readings.length
+    peakSector: peakEvent?.sector ?? "No data",
+    peakPerimeterIndex: peakEvent?.perimeterIndex ?? 0,
+    eventCount: events.length
   };
 }
 
-export function perimeterScopeOptions(
-  readings: Reading[]
-): DashboardScopeOption[] {
-  const sectors = [
-    ...new Set(readings.map((reading) => reading.sector))
-  ].sort();
+export function perimeterScopeOptions(events: Event[]): DashboardScopeOption[] {
+  const sectors = [...new Set(events.map((event) => event.sector))].sort();
 
   return [
     { label: "All sectors", value: "all" },
@@ -77,23 +73,23 @@ export function perimeterScopeOptions(
   ];
 }
 
-export function averageIncidentCount(readings: Reading[]) {
+export function averageIncidentCount(events: Event[]) {
   return (
-    readings.reduce((sum, item) => sum + item.incidentCount, 0) /
-    Math.max(readings.length, 1)
+    events.reduce((sum, item) => sum + item.incidentCount, 0) /
+    Math.max(events.length, 1)
   );
 }
 
-export function criticalSectorCount(readings: Reading[]) {
-  return readings.filter((reading) => reading.status === "CRITICAL").length;
+export function criticalSectorCount(events: Event[]) {
+  return events.filter((event) => event.status === "CRITICAL").length;
 }
 
-export function criticalSectors(readings: Reading[]) {
+export function criticalSectors(events: Event[]) {
   return [
     ...new Set(
-      readings
-        .filter((reading) => reading.status === "CRITICAL")
-        .map((reading) => reading.sector)
+      events
+        .filter((event) => event.status === "CRITICAL")
+        .map((event) => event.sector)
     )
   ];
 }

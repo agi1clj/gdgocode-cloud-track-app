@@ -1,4 +1,4 @@
-export type Reading = {
+export type Event = {
   id: number;
   sector: string;
   recordedAt: string;
@@ -11,7 +11,7 @@ export type Summary = {
   averagePerimeterIndex: number;
   peakSector: string;
   peakPerimeterIndex: number;
-  readingCount: number;
+  eventCount: number;
 };
 
 export type DashboardScopeOption = {
@@ -19,8 +19,8 @@ export type DashboardScopeOption = {
   value: string;
 };
 
-export type ReadingsResponse = {
-  readings: Reading[];
+export type EventsResponse = {
+  events: Event[];
   summary: Summary;
   readOnly: boolean;
 };

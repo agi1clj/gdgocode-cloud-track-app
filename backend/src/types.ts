@@ -1,4 +1,4 @@
-export interface ReadingRow {
+export interface EventRow {
   id: number;
   sector: string;
   recorded_at: string;
@@ -7,7 +7,7 @@ export interface ReadingRow {
   status: string;
 }
 
-export interface Reading {
+export interface Event {
   id: number;
   sector: string;
   recordedAt: string;
@@ -16,15 +16,15 @@ export interface Reading {
   status: string;
 }
 
-export interface ReadingSummary {
+export interface EventSummary {
   averagePerimeterIndex: number;
   peakSector: string;
   peakPerimeterIndex: number;
-  readingCount: number;
+  eventCount: number;
 }
 
-export interface ReadingsResponse {
-  readings: Reading[];
-  summary: ReadingSummary;
+export interface EventsResponse {
+  events: Event[];
+  summary: EventSummary;
   readOnly: boolean;
 }

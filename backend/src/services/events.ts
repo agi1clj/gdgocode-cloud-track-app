@@ -1,17 +1,17 @@
 import { pool } from "../db.js";
-import { sampleReadings } from "../sampleData.js";
+import { sampleEvents } from "../sampleData.js";
 import type {
-  Reading,
-  ReadingRow,
-  ReadingsResponse,
-  ReadingSummary
+  Event,
+  EventRow,
+  EventsResponse,
+  EventSummary
 } from "../types.js";
 
 export function isBackendReadOnly() {
   return process.env.BACKEND_READ_ONLY !== "false";
 }
 
-function mapReading(row: ReadingRow): Reading {
+function mapEvent(row: EventRow): Event {
   return {
     id: row.id,
     sector: row.sector,
@@ -22,12 +22,12 @@ function mapReading(row: ReadingRow): Reading {
   };
 }
 
-function buildSummary(readings: Reading[]): ReadingSummary {
-  const total = readings.reduce((sum, item) => sum + item.perimeterIndex, 0);
-  const peak = readings.reduce(
+function buildSummary(events: Event[]): EventSummary {
+  const total = events.reduce((sum, item) => sum + item.perimeterIndex, 0);
+  const peak = events.reduce(
     (currentPeak, item) =>
       item.perimeterIndex > currentPeak.perimeterIndex ? item : currentPeak,
-    readings[0] || {
+    events[0] || {
       id: 0,
       sector: "No data",
       recordedAt: "",
@@ -38,10 +38,10 @@ function buildSummary(readings: Reading[]): ReadingSummary {
   );
 
   return {
-    averagePerimeterIndex: readings.length ? total / readings.length : 0,
+    averagePerimeterIndex: events.length ? total / events.length : 0,
     peakSector: peak.sector,
     peakPerimeterIndex: peak.perimeterIndex,
-    readingCount: readings.length
+    eventCount: events.length
   };
 }
 
@@ -50,36 +50,36 @@ export async function getDatabaseTime() {
   return result.rows[0].database_time;
 }
 
-export async function listReadings(): Promise<ReadingsResponse> {
-  const result = await pool.query<ReadingRow>(
+export async function listEvents(): Promise<EventsResponse> {
+  const result = await pool.query<EventRow>(
     `SELECT id, sector, recorded_at, perimeter_index, incident_count, status
      FROM gdgocode_perimeter_readings
      ORDER BY recorded_at ASC`
   );
 
-  const readings = result.rows.map(mapReading);
+  const events = result.rows.map(mapEvent);
 
   return {
-    readings,
-    summary: buildSummary(readings),
+    events,
+    summary: buildSummary(events),
     readOnly: isBackendReadOnly()
   };
 }
 
-export async function seedReadings() {
+export async function seedEvents() {
   await pool.query(
     "TRUNCATE TABLE gdgocode_perimeter_readings RESTART IDENTITY"
   );
 
-  const values = sampleReadings.flatMap((reading) => [
-    reading.sector,
-    reading.recordedAt,
-    reading.perimeterIndex,
-    reading.incidentCount,
-    reading.status
+  const values = sampleEvents.flatMap((event) => [
+    event.sector,
+    event.recordedAt,
+    event.perimeterIndex,
+    event.incidentCount,
+    event.status
   ]);
 
-  const placeholders = sampleReadings
+  const placeholders = sampleEvents
     .map(
       (_, index) =>
         `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${index * 5 + 4}, $${index * 5 + 5})`
@@ -93,11 +93,11 @@ export async function seedReadings() {
   );
 
   return {
-    inserted: sampleReadings.length
+    inserted: sampleEvents.length
   };
 }
 
-export async function clearReadings() {
+export async function clearEvents() {
   await pool.query(
     "TRUNCATE TABLE gdgocode_perimeter_readings RESTART IDENTITY"
   );
