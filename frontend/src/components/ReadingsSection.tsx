@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   Chip,
-  Divider,
   Skeleton,
   Stack,
   Table,
@@ -82,23 +81,22 @@ export function ReadingsSection({
                     color="text.secondary"
                     sx={{ fontWeight: 700 }}
                   >
-                    AQI dataset
+                    Field events
                   </Typography>
-                  <Typography variant="h5">Cluj-Napoca AQI readings</Typography>
+                  <Typography variant="h5">Event log</Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ mt: 0.5 }}
                   >
-                    Timestamped AQI and PM2.5 observations for each monitored
-                    Cluj-Napoca zone.
+                    Timestamped index and incident events by sector.
                   </Typography>
                 </Box>
                 <Chip
                   label={
                     loadingState === "loading"
                       ? "Loading"
-                      : `${readings.length} rows`
+                      : `${readings.length} events`
                   }
                   color="warning"
                   variant="outlined"
@@ -136,9 +134,9 @@ export function ReadingsSection({
                 bgcolor: "grey.50"
               }}
             >
-              <Typography variant="h6">No readings yet</Typography>
+              <Typography variant="h6">No events yet</Typography>
               <Typography color="text.secondary">
-                Load a sample scenario to begin reviewing Cluj observations.
+                Load a scenario to begin reviewing perimeter events.
               </Typography>
             </Box>
           ) : (
@@ -153,25 +151,36 @@ export function ReadingsSection({
                   <Box
                     key={reading.id}
                     sx={{
-                      p: 1.5,
-                      borderRadius: 3,
+                      px: 2.5,
+                      py: 2.1,
+                      borderRadius: 4,
                       border: "1px solid",
-                      borderColor: "divider",
-                      bgcolor: alpha("#fff", 0.94)
+                      borderColor:
+                        reading.status === "CRITICAL"
+                          ? alpha("#D95040", 0.34)
+                          : "divider",
+                      bgcolor:
+                        reading.status === "CRITICAL"
+                          ? alpha("#D95040", 0.05)
+                          : alpha("#fff", 0.94),
+                      boxShadow:
+                        reading.status === "CRITICAL"
+                          ? "0 0 0 1px rgba(217,80,64,0.05), 0 16px 32px rgba(217,80,64,0.08)"
+                          : "none"
                     }}
                   >
-                    <Stack spacing={1}>
+                    <Stack spacing={1.2}>
                       <Box
                         sx={{
                           display: "flex",
                           alignItems: "flex-start",
                           justifyContent: "space-between",
-                          gap: 1
+                          gap: 1.75
                         }}
                       >
                         <Box sx={{ minWidth: 0 }}>
                           <Typography sx={{ fontWeight: 700 }}>
-                            {reading.zone}
+                            {reading.sector}
                           </Typography>
                           <Typography
                             variant="body2"
@@ -185,8 +194,9 @@ export function ReadingsSection({
                           component="span"
                           sx={{
                             display: "inline-flex",
-                            px: 1.1,
-                            py: 0.45,
+                            flexShrink: 0,
+                            px: 1.25,
+                            py: 0.5,
                             borderRadius: 999,
                             bgcolor: statusTone(reading.status).bg,
                             color: statusTone(reading.status).color,
@@ -204,23 +214,23 @@ export function ReadingsSection({
                         sx={{
                           display: "grid",
                           gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                          gap: 1
+                          gap: 1.2
                         }}
                       >
                         <Box>
                           <Typography variant="caption" color="text.secondary">
-                            AQI
+                            Index
                           </Typography>
                           <Typography sx={{ fontWeight: 700 }}>
-                            {formatOneDecimal(reading.airQualityIndex)}
+                            {formatOneDecimal(reading.perimeterIndex)}
                           </Typography>
                         </Box>
                         <Box>
                           <Typography variant="caption" color="text.secondary">
-                            PM2.5
+                            Incidents
                           </Typography>
                           <Typography sx={{ fontWeight: 700 }}>
-                            {reading.pm25}
+                            {reading.incidentCount}
                           </Typography>
                         </Box>
                       </Box>
@@ -261,11 +271,11 @@ export function ReadingsSection({
                 >
                   <TableHead sx={{ bgcolor: alpha("#4285F4", 0.05) }}>
                     <TableRow>
-                      <TableCell>Neighborhood</TableCell>
+                      <TableCell>Sector</TableCell>
                       <TableCell>Time</TableCell>
-                      <TableCell>AQI</TableCell>
-                      <TableCell>PM2.5</TableCell>
-                      <TableCell>Status</TableCell>
+                      <TableCell>Perimeter Index</TableCell>
+                      <TableCell>Incidents</TableCell>
+                      <TableCell>Alert Level</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -274,19 +284,29 @@ export function ReadingsSection({
                         key={reading.id}
                         hover
                         sx={{
-                          animationDelay: `${index * 70}ms`
+                          animationDelay: `${index * 70}ms`,
+                          bgcolor:
+                            reading.status === "CRITICAL"
+                              ? alpha("#D95040", 0.04)
+                              : "transparent",
+                          "&:hover": {
+                            bgcolor:
+                              reading.status === "CRITICAL"
+                                ? alpha("#D95040", 0.08)
+                                : undefined
+                          }
                         }}
                       >
                         <TableCell sx={{ fontWeight: 600 }}>
-                          {reading.zone}
+                          {reading.sector}
                         </TableCell>
                         <TableCell>
                           {formatDateTime(reading.recordedAt)}
                         </TableCell>
                         <TableCell>
-                          {formatOneDecimal(reading.airQualityIndex)}
+                          {formatOneDecimal(reading.perimeterIndex)}
                         </TableCell>
-                        <TableCell>{reading.pm25}</TableCell>
+                        <TableCell>{reading.incidentCount}</TableCell>
                         <TableCell>
                           <Box
                             component="span"

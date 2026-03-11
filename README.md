@@ -1,16 +1,37 @@
 # GDGoCode Cloud Track App
 
-Cluj-Napoca AQI dashboard starter for the GDGoCode 2026 Cloud Track.
+Romania Perimeter Index Dashboard starter for the GDGoCode 2026 Cloud Track defense challenge.
 
 This repo contains the application code. Cloud infrastructure lives in the companion repo [gdgocode-cloud-track-infra](https://github.com/agi1clj/gdgocode-cloud-track-infra).
 
 ## What this repo contains
 
-- `frontend/`: React + Vite + TypeScript + Material UI dashboard
+- `frontend/`: React + Vite + TypeScript + Material UI operations dashboard
 - `backend/`: Node.js + Express + TypeScript API
 - `docker-compose.yml`: local frontend + backend + PostgreSQL stack
 - `docs/schema-migration-guide.md`: database/API change workflow
 - `docs/cloud-deploy-walkthrough.md`: step-by-step cloud deployment guide
+
+## Scenario
+
+The starter models a Romania-themed perimeter monitoring scenario with several monitored sectors.
+
+Each reading contains:
+
+- `sector`: where the signal came from
+- `recordedAt`: when the reading was captured
+- `perimeterIndex`: a simple risk score for that sector
+- `incidentCount`: how many suspicious events contributed to the score
+- `status`: `NORMAL`, `WATCH`, or `CRITICAL`
+
+Students can extend this into:
+
+- drone detection
+- gate access monitoring
+- camera or radar health
+- alert notifications
+- response workflows
+- map overlays or command views
 
 ## Quick start
 
@@ -38,9 +59,9 @@ Open:
 Suggested local check:
 
 1. Open the dashboard.
-2. Click `Load`.
+2. Click `Load scenario`.
 3. Click `Refresh`.
-4. Confirm the cards, charts, and AQI table update.
+4. Confirm the cards, charts, and perimeter event log update.
 
 Stop the stack:
 
@@ -53,7 +74,7 @@ docker compose down
 Follow the docs in this order:
 
 1. start here in `README.md`
-2. run the app locally and confirm the AQI dashboard works
+2. run the app locally and confirm the perimeter dashboard works
 3. push the app code to GitHub
 4. continue with [docs/cloud-deploy-walkthrough.md](docs/cloud-deploy-walkthrough.md)
 5. let GitHub Actions publish the Docker images
@@ -177,6 +198,7 @@ If you change the database structure or API response shape, use:
 
 Current baseline checks for this repo:
 
+- `npm run format:check`
 - `npm run check`
 - `npm run build`
 - `npm audit --audit-level=high` in `frontend/`

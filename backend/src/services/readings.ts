@@ -14,33 +14,33 @@ export function isBackendReadOnly() {
 function mapReading(row: ReadingRow): Reading {
   return {
     id: row.id,
-    zone: row.zone,
+    sector: row.sector,
     recordedAt: row.recorded_at,
-    airQualityIndex: Number(row.air_quality_index),
-    pm25: row.pm25,
+    perimeterIndex: Number(row.perimeter_index),
+    incidentCount: row.incident_count,
     status: row.status
   };
 }
 
 function buildSummary(readings: Reading[]): ReadingSummary {
-  const total = readings.reduce((sum, item) => sum + item.airQualityIndex, 0);
+  const total = readings.reduce((sum, item) => sum + item.perimeterIndex, 0);
   const peak = readings.reduce(
     (currentPeak, item) =>
-      item.airQualityIndex > currentPeak.airQualityIndex ? item : currentPeak,
+      item.perimeterIndex > currentPeak.perimeterIndex ? item : currentPeak,
     readings[0] || {
       id: 0,
-      zone: "No data",
+      sector: "No data",
       recordedAt: "",
-      airQualityIndex: 0,
-      pm25: 0,
+      perimeterIndex: 0,
+      incidentCount: 0,
       status: "NORMAL"
     }
   );
 
   return {
-    averageAirQualityIndex: readings.length ? total / readings.length : 0,
-    peakZone: peak.zone,
-    peakAirQualityIndex: peak.airQualityIndex,
+    averagePerimeterIndex: readings.length ? total / readings.length : 0,
+    peakSector: peak.sector,
+    peakPerimeterIndex: peak.perimeterIndex,
     readingCount: readings.length
   };
 }
@@ -52,8 +52,8 @@ export async function getDatabaseTime() {
 
 export async function listReadings(): Promise<ReadingsResponse> {
   const result = await pool.query<ReadingRow>(
-    `SELECT id, zone, recorded_at, air_quality_index, pm25, status
-     FROM gdgocode_readings
+    `SELECT id, sector, recorded_at, perimeter_index, incident_count, status
+     FROM gdgocode_perimeter_readings
      ORDER BY recorded_at ASC`
   );
 
@@ -67,13 +67,15 @@ export async function listReadings(): Promise<ReadingsResponse> {
 }
 
 export async function seedReadings() {
-  await pool.query("TRUNCATE TABLE gdgocode_readings RESTART IDENTITY");
+  await pool.query(
+    "TRUNCATE TABLE gdgocode_perimeter_readings RESTART IDENTITY"
+  );
 
   const values = sampleReadings.flatMap((reading) => [
-    reading.zone,
+    reading.sector,
     reading.recordedAt,
-    reading.airQualityIndex,
-    reading.pm25,
+    reading.perimeterIndex,
+    reading.incidentCount,
     reading.status
   ]);
 
@@ -85,7 +87,7 @@ export async function seedReadings() {
     .join(", ");
 
   await pool.query(
-    `INSERT INTO gdgocode_readings (zone, recorded_at, air_quality_index, pm25, status)
+    `INSERT INTO gdgocode_perimeter_readings (sector, recorded_at, perimeter_index, incident_count, status)
      VALUES ${placeholders}`,
     values
   );
@@ -96,5 +98,7 @@ export async function seedReadings() {
 }
 
 export async function clearReadings() {
-  await pool.query("TRUNCATE TABLE gdgocode_readings RESTART IDENTITY");
+  await pool.query(
+    "TRUNCATE TABLE gdgocode_perimeter_readings RESTART IDENTITY"
+  );
 }

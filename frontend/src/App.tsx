@@ -17,7 +17,7 @@ import { ReadingsSection } from "./components/ReadingsSection";
 import { StatCard } from "./components/StatCard";
 import { DashboardControls } from "./components/DashboardControls";
 import { LineChart } from "./components/LineChart";
-import { ZoneBarChart } from "./components/ZoneBarChart";
+import { SectorBarChart } from "./components/SectorBarChart";
 import { getEventName } from "./config";
 import {
   clearReadings,
@@ -25,18 +25,20 @@ import {
   logClientError,
   seedReadings
 } from "./lib/api";
+import { deliverySignals } from "./lib/dashboard";
 import {
-  consumptionSeries,
-  dashboardScopeOptions,
-  deliverySignals,
+  averageIncidentCount,
+  criticalSectorCount,
+  perimeterScopeOptions,
+  perimeterSeries,
   summarizeReadings,
-  topZones
-} from "./lib/dashboard";
+  topSectors
+} from "./lib/perimeter";
 import { formatOneDecimal, formatShortDateTime } from "./lib/formatters";
 import type {
   ActionState,
-  ReadingsResponse,
   Reading,
+  ReadingsResponse,
   StatCardDefinition
 } from "./types";
 
@@ -109,20 +111,20 @@ function App() {
   }, []);
 
   useLayoutEffect(() => {
-    document.title = "Cluj-Napoca AQI Dashboard";
+    document.title = "Perimeter Watch";
   });
 
   const readings = data?.readings ?? [];
   const readOnly = data?.readOnly ?? true;
   const scopeOptions = useMemo(
-    () => dashboardScopeOptions(readings),
+    () => perimeterScopeOptions(readings),
     [readings]
   );
   const filteredReadings = useMemo(
     () =>
       scope === "all"
         ? readings
-        : readings.filter((reading: Reading) => reading.zone === scope),
+        : readings.filter((reading: Reading) => reading.sector === scope),
     [readings, scope]
   );
 
@@ -139,43 +141,39 @@ function App() {
   const latestTimestamp = filteredReadings.at(-1)?.recordedAt;
   const lastUpdatedLabel = latestTimestamp
     ? `Updated ${formatShortDateTime(latestTimestamp)}`
-    : "No readings yet";
+    : "No events yet";
 
   const stats = useMemo<StatCardDefinition[]>(
     () => [
       {
-        label: "Sensor samples",
+        label: "Sensor events",
         value: String(summary.readingCount ?? 0),
         meta:
           loadingState === "loading"
-            ? "Refreshing the latest AQI batch"
+            ? "Refreshing latest events"
             : scope === "all"
-              ? "Captured across monitored Cluj zones"
-              : `${scope} monitoring rows`,
+              ? "Across all sectors"
+              : `${scope} events`,
         tone: "blue"
       },
       {
-        label: "Avg AQI",
-        value: formatOneDecimal(summary.averageAirQualityIndex ?? 0),
-        meta:
-          scope === "all" ? "AQI across all monitored zones" : `${scope} AQI`,
+        label: "Avg index",
+        value: formatOneDecimal(summary.averagePerimeterIndex ?? 0),
+        meta: scope === "all" ? "Across all sectors" : `${scope} pressure`,
         tone: "red"
       },
       {
-        label: "PM2.5 average",
-        value: formatOneDecimal(
-          filteredReadings.reduce((sum, item) => sum + item.pm25, 0) /
-            Math.max(filteredReadings.length, 1)
-        ),
-        meta: "Average PM2.5 ug/m3",
+        label: "Avg incidents",
+        value: formatOneDecimal(averageIncidentCount(filteredReadings)),
+        meta: "Average incidents per event",
         tone: "green"
       },
       {
-        label: "Peak zone",
-        value: summary.peakZone ?? "No data",
+        label: "Peak sector",
+        value: summary.peakSector ?? "No data",
         meta:
           summary.readingCount > 0
-            ? `Highest recorded AQI ${formatOneDecimal(summary.peakAirQualityIndex)}`
+            ? `Peak index ${formatOneDecimal(summary.peakPerimeterIndex)}`
             : "Load a scenario first",
         tone: "yellow"
       }
@@ -183,12 +181,12 @@ function App() {
     [filteredReadings, loadingState, scope, summary]
   );
 
-  const spotlightZones = useMemo(
-    () => topZones(filteredReadings),
+  const spotlightSectors = useMemo(
+    () => topSectors(filteredReadings),
     [filteredReadings]
   );
   const timeSeries = useMemo(
-    () => consumptionSeries(filteredReadings),
+    () => perimeterSeries(filteredReadings),
     [filteredReadings]
   );
 
@@ -198,9 +196,9 @@ function App() {
         minHeight: "100vh",
         py: { xs: 3, md: 4 },
         background: `
-          radial-gradient(circle at top left, rgba(66, 133, 244, 0.08), transparent 22%),
-          radial-gradient(circle at top right, rgba(56, 142, 60, 0.07), transparent 20%),
-          linear-gradient(180deg, #ffffff 0%, #fbfdff 42%, #ffffff 100%)
+          radial-gradient(circle at top left, rgba(25, 118, 210, 0.08), transparent 24%),
+          radial-gradient(circle at top right, rgba(217, 80, 64, 0.09), transparent 22%),
+          linear-gradient(180deg, #fbfcff 0%, #f5f7fb 42%, #ffffff 100%)
         `
       }}
     >
@@ -218,13 +216,14 @@ function App() {
             summary={summary}
             lastUpdatedLabel={lastUpdatedLabel}
             scope={scope}
+            criticalCount={criticalSectorCount(filteredReadings)}
           />
 
           {error ? <Alert severity="error">{error}</Alert> : null}
           {readOnly ? (
             <Alert severity="info">
               Backend is running in read-only mode. Refresh is available, but
-              load and clear actions are disabled.
+              scenario load and clear actions are disabled.
             </Alert>
           ) : null}
 
@@ -287,7 +286,7 @@ function App() {
               }}
             >
               <LineChart points={timeSeries} />
-              <ZoneBarChart zones={spotlightZones} />
+              <SectorBarChart sectors={spotlightSectors} />
             </Box>
 
             <Stack spacing={2}>
@@ -302,18 +301,21 @@ function App() {
                   color="text.secondary"
                   sx={{ fontWeight: 700 }}
                 >
-                  Monitoring Overview
+                  Operations Overview
                 </Typography>
                 <Typography
                   variant="h4"
-                  sx={{ maxWidth: { xs: "none", md: "14ch" } }}
+                  sx={{
+                    maxWidth: { xs: "none", md: "none" },
+                    whiteSpace: { xs: "normal", xl: "nowrap" }
+                  }}
                 >
-                  City status at a glance.
+                  Site posture at a glance.
                 </Typography>
               </Box>
               <InsightPanels
                 readings={filteredReadings}
-                spotlightZones={spotlightZones}
+                spotlightSectors={spotlightSectors}
               />
             </Stack>
           </Box>
@@ -327,7 +329,7 @@ function App() {
             component="section"
             sx={{
               background:
-                "linear-gradient(180deg, rgba(66,133,244,0.04) 0%, rgba(255,255,255,1) 100%)"
+                "linear-gradient(180deg, rgba(25,118,210,0.04) 0%, rgba(255,255,255,1) 100%)"
             }}
           >
             <CardContent>
@@ -353,7 +355,7 @@ function App() {
                     variant="h5"
                     sx={{ fontSize: { xs: "1.35rem", md: "1.5rem" } }}
                   >
-                    Built to present a believable AQI monitoring product.
+                    Built to feel like a believable defense dashboard.
                   </Typography>
                   <Typography
                     color="text.secondary"
@@ -362,9 +364,9 @@ function App() {
                       display: { xs: "none", sm: "block" }
                     }}
                   >
-                    Cluj-Napoca AQI trends, neighborhood hotspots, PM2.5
-                    exposure, and timestamped observations in one clean
-                    monitoring view.
+                    Alert posture, sector pressure, and incident logs in one
+                    starter app students can extend with maps, alerts, drones,
+                    and response flows.
                   </Typography>
                   <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                     <Chip
@@ -373,11 +375,11 @@ function App() {
                       variant="outlined"
                     />
                     <Chip
-                      label="Google Cloud workshop build"
+                      label="Defense challenge starter"
                       color="secondary"
                       variant="outlined"
                     />
-                    <Chip label="Cluj-Napoca AQI" variant="outlined" />
+                    <Chip label="Romania sectors" variant="outlined" />
                   </Stack>
                 </Stack>
 
@@ -410,7 +412,7 @@ function App() {
                     <Divider />
                     <Typography color="text.secondary">
                       RebelDot supported the GDGoCode 2026 Cloud Track delivery
-                      environment.
+                      environment for this perimeter monitoring starter.
                     </Typography>
                   </Stack>
                 </Box>

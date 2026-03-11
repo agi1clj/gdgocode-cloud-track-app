@@ -12,10 +12,10 @@ The short version:
 
 ## Current flow
 
-Today the main AQI dataset looks like this:
+Today the main monitoring dataset looks like this:
 
-- table: `gdgocode_readings`
-- migration source: `backend/src/migrations/001_init_air_quality_schema.sql`
+- table: `gdgocode_perimeter_readings`
+- migration source: `backend/src/migrations/001_init_perimeter_monitoring_schema.sql`
 - backend row model: `backend/src/types.ts`
 - backend service logic: `backend/src/services/readings.ts`
 - OpenAPI schema: `backend/src/docs/schemas.ts`
@@ -31,27 +31,22 @@ If the database schema needs to change, create a new numbered `.sql` migration i
 
 Example:
 
-- `002_add_no2_column.sql`
-- `003_replace_status_with_risk_band.sql`
+- `002_add_drone_hits_column.sql`
+- `003_replace_status_with_alert_band.sql`
 
 The migration runner applies files in filename order and records them in `schema_migrations`.
 
-Relevant files:
-
-- `backend/src/migrations.ts`
-- `backend/src/migrate.ts`
-
 ## When you add a new column
 
-Example: add `no2 INTEGER NOT NULL DEFAULT 0`.
+Example: add `drone_hits INTEGER NOT NULL DEFAULT 0`.
 
 ### 1. Create a new SQL migration
 
-Create `backend/src/migrations/002_add_no2_column.sql`:
+Create `backend/src/migrations/002_add_drone_hits_column.sql`:
 
 ```sql
-ALTER TABLE gdgocode_readings
-ADD COLUMN no2 INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE gdgocode_perimeter_readings
+ADD COLUMN drone_hits INTEGER NOT NULL DEFAULT 0;
 ```
 
 If the seed dataset should provide real values, also update:
@@ -67,10 +62,10 @@ Before:
 ```ts
 export interface ReadingRow {
   id: number;
-  zone: string;
+  sector: string;
   recorded_at: string;
-  air_quality_index: string;
-  pm25: number;
+  perimeter_index: string;
+  incident_count: number;
   status: string;
 }
 ```
@@ -80,11 +75,11 @@ After:
 ```ts
 export interface ReadingRow {
   id: number;
-  zone: string;
+  sector: string;
   recorded_at: string;
-  air_quality_index: string;
-  pm25: number;
-  no2: number;
+  perimeter_index: string;
+  incident_count: number;
+  drone_hits: number;
   status: string;
 }
 ```
@@ -107,11 +102,11 @@ Example:
 function mapReading(row: ReadingRow): Reading {
   return {
     id: row.id,
-    zone: row.zone,
+    sector: row.sector,
     recordedAt: row.recorded_at,
-    airQualityIndex: Number(row.air_quality_index),
-    pm25: row.pm25,
-    no2: row.no2,
+    perimeterIndex: Number(row.perimeter_index),
+    incidentCount: row.incident_count,
+    droneHits: row.drone_hits,
     status: row.status
   };
 }
@@ -145,11 +140,7 @@ Typical examples:
 
 - new table column in `ReadingsSection.tsx`
 - new stat card in `App.tsx`
-- new chart input in `LineChart.tsx` or `ZoneBarChart.tsx`
-
-If the response URL or request shape changed, also update:
-
-- `frontend/src/lib/api.ts`
+- new chart input in `LineChart.tsx` or `SectorBarChart.tsx`
 
 ## 6. Apply the migration locally
 
@@ -188,7 +179,7 @@ Then verify manually:
 
 ### Rename a column
 
-Example: rename `air_quality_index` to `aqi`.
+Example: rename `perimeter_index` to `risk_score`.
 
 You need to update:
 
@@ -200,11 +191,9 @@ You need to update:
 - `frontend/src/lib/dashboard.ts`
 - any UI component using the old field name
 
-This is a breaking change unless you keep backward compatibility in the API.
-
 ### Add a derived summary field
 
-Example: add `averagePm25` to the `summary`.
+Example: add `averageIncidentCount` to the `summary`.
 
 You do not need a schema migration if the value is computed only in code.
 
@@ -218,7 +207,7 @@ You do need to update:
 
 ### Split one table into multiple tables
 
-This is a larger change.
+Treat this as an API refactor, not just a SQL change.
 
 Minimum backend areas to update:
 
@@ -228,35 +217,13 @@ Minimum backend areas to update:
 - API response types in `backend/src/types.ts`
 - OpenAPI docs in `backend/src/docs/schemas.ts`
 
-Treat this as an API refactor, not just a SQL change.
-
-## Files you will most often touch
-
-Backend:
-
-- `backend/src/migrations/*.sql`
-- `backend/src/sampleData.ts`
-- `backend/src/types.ts`
-- `backend/src/services/readings.ts`
-- `backend/src/docs/schemas.ts`
-- sometimes `backend/src/routes/readings.ts`
-
-Frontend:
-
-- `frontend/src/types.ts`
-- `frontend/src/lib/api.ts`
-- `frontend/src/lib/dashboard.ts`
-- `frontend/src/App.tsx`
-- `frontend/src/components/ReadingsSection.tsx`
-- chart components if the visualized metric changed
-
-## If you want to change the current AQI domain model entirely
+## If you want to change the current domain model entirely
 
 For example:
 
-- replace AQI with a different environmental metric
-- add multiple pollutant series
-- store station IDs instead of zone names
+- replace perimeter monitoring with convoy tracking
+- add multiple sensor series
+- store station IDs instead of sector names
 - add historical aggregation tables
 
 Use this order:

@@ -1,44 +1,128 @@
 export const sampleReadings = [
   {
-    zone: "Marasti",
+    sector: "Oradea North",
     recordedAt: "2026-03-13T18:00:00Z",
-    airQualityIndex: 38,
-    pm25: 14,
+    perimeterIndex: 24,
+    incidentCount: 1,
     status: "NORMAL"
   },
   {
-    zone: "Grigorescu",
+    sector: "Timisoara West",
+    recordedAt: "2026-03-13T18:30:00Z",
+    perimeterIndex: 29,
+    incidentCount: 1,
+    status: "NORMAL"
+  },
+  {
+    sector: "Iasi East",
     recordedAt: "2026-03-13T19:00:00Z",
-    airQualityIndex: 32,
-    pm25: 11,
-    status: "NORMAL"
-  },
-  {
-    zone: "Gheorgheni",
-    recordedAt: "2026-03-13T20:00:00Z",
-    airQualityIndex: 57,
-    pm25: 23,
+    perimeterIndex: 42,
+    incidentCount: 2,
     status: "WATCH"
   },
   {
-    zone: "Manastur",
-    recordedAt: "2026-03-13T21:00:00Z",
-    airQualityIndex: 74,
-    pm25: 31,
-    status: "CRITICAL"
+    sector: "Cluj Hub",
+    recordedAt: "2026-03-13T19:30:00Z",
+    perimeterIndex: 51,
+    incidentCount: 3,
+    status: "WATCH"
   },
   {
-    zone: "Zorilor",
-    recordedAt: "2026-03-13T22:00:00Z",
-    airQualityIndex: 29,
-    pm25: 9,
+    sector: "Craiova South",
+    recordedAt: "2026-03-13T20:00:00Z",
+    perimeterIndex: 27,
+    incidentCount: 1,
     status: "NORMAL"
   },
   {
-    zone: "Buna Ziua",
-    recordedAt: "2026-03-14T09:00:00Z",
-    airQualityIndex: 49,
-    pm25: 18,
+    sector: "Constanta Relay",
+    recordedAt: "2026-03-13T20:30:00Z",
+    perimeterIndex: 38,
+    incidentCount: 2,
+    status: "WATCH"
+  },
+  {
+    sector: "Oradea North",
+    recordedAt: "2026-03-13T21:00:00Z",
+    perimeterIndex: 31,
+    incidentCount: 2,
+    status: "WATCH"
+  },
+  {
+    sector: "Timisoara West",
+    recordedAt: "2026-03-13T21:30:00Z",
+    perimeterIndex: 46,
+    incidentCount: 3,
+    status: "WATCH"
+  },
+  {
+    sector: "Iasi East",
+    recordedAt: "2026-03-13T22:00:00Z",
+    perimeterIndex: 58,
+    incidentCount: 4,
+    status: "WATCH"
+  },
+  {
+    sector: "Cluj Hub",
+    recordedAt: "2026-03-13T22:30:00Z",
+    perimeterIndex: 74,
+    incidentCount: 5,
+    status: "CRITICAL"
+  },
+  {
+    sector: "Craiova South",
+    recordedAt: "2026-03-13T23:00:00Z",
+    perimeterIndex: 35,
+    incidentCount: 2,
+    status: "WATCH"
+  },
+  {
+    sector: "Constanta Relay",
+    recordedAt: "2026-03-13T23:30:00Z",
+    perimeterIndex: 49,
+    incidentCount: 3,
+    status: "WATCH"
+  },
+  {
+    sector: "Oradea North",
+    recordedAt: "2026-03-14T00:00:00Z",
+    perimeterIndex: 28,
+    incidentCount: 1,
+    status: "NORMAL"
+  },
+  {
+    sector: "Timisoara West",
+    recordedAt: "2026-03-14T00:30:00Z",
+    perimeterIndex: 41,
+    incidentCount: 2,
+    status: "WATCH"
+  },
+  {
+    sector: "Iasi East",
+    recordedAt: "2026-03-14T01:00:00Z",
+    perimeterIndex: 64,
+    incidentCount: 5,
+    status: "CRITICAL"
+  },
+  {
+    sector: "Cluj Hub",
+    recordedAt: "2026-03-14T01:30:00Z",
+    perimeterIndex: 82,
+    incidentCount: 7,
+    status: "CRITICAL"
+  },
+  {
+    sector: "Craiova South",
+    recordedAt: "2026-03-14T02:00:00Z",
+    perimeterIndex: 33,
+    incidentCount: 2,
+    status: "WATCH"
+  },
+  {
+    sector: "Constanta Relay",
+    recordedAt: "2026-03-14T02:30:00Z",
+    perimeterIndex: 46,
+    incidentCount: 3,
     status: "WATCH"
   }
 ];

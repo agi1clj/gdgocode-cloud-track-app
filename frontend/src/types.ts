@@ -1,16 +1,16 @@
 export type Reading = {
   id: number;
-  zone: string;
+  sector: string;
   recordedAt: string;
-  airQualityIndex: number;
-  pm25: number;
+  perimeterIndex: number;
+  incidentCount: number;
   status: string;
 };
 
 export type Summary = {
-  averageAirQualityIndex: number;
-  peakZone: string;
-  peakAirQualityIndex: number;
+  averagePerimeterIndex: number;
+  peakSector: string;
+  peakPerimeterIndex: number;
   readingCount: number;
 };
 
@@ -41,9 +41,9 @@ export type TimeSeriesPoint = {
   value: number;
 };
 
-export type ZoneTotal = {
-  zone: string;
-  totalAirQualityIndex: number;
+export type SectorTotal = {
+  sector: string;
+  totalPerimeterIndex: number;
 };
 
 export type DeliverySignal = {

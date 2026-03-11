@@ -1,18 +1,18 @@
 import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
 import { Box, Card, CardContent, Chip, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { statusSummary } from "../lib/dashboard";
+import { statusSummary } from "../lib/perimeter";
 import { formatOneDecimal } from "../lib/formatters";
-import type { Reading, ZoneTotal } from "../types";
+import type { Reading, SectorTotal } from "../types";
 
 type InsightPanelsProps = {
   readings: Reading[];
-  spotlightZones: ZoneTotal[];
+  spotlightSectors: SectorTotal[];
 };
 
 export function InsightPanels({
   readings,
-  spotlightZones
+  spotlightSectors
 }: InsightPanelsProps) {
   const statusBreakdown = statusSummary(readings);
   const statusCards = [
@@ -36,9 +36,9 @@ export function InsightPanels({
                 color="text.secondary"
                 sx={{ fontWeight: 700 }}
               >
-                City state
+                Alert posture
               </Typography>
-              <Typography variant="h5">AQI alert mix</Typography>
+              <Typography variant="h5">Perimeter alert mix</Typography>
             </Box>
 
             <Box
@@ -55,7 +55,7 @@ export function InsightPanels({
                 <Box
                   key={item.label}
                   sx={{
-                    p: 2,
+                    p: 2.35,
                     borderRadius: 4,
                     bgcolor: alpha(item.color, 0.1),
                     border: `1px solid ${alpha(item.color, 0.14)}`
@@ -83,26 +83,33 @@ export function InsightPanels({
                 color="text.secondary"
                 sx={{ fontWeight: 700 }}
               >
-                Zones
+                Priority sectors
               </Typography>
-              <Typography variant="h5">Top neighborhoods</Typography>
+              <Typography variant="h5">Top sectors</Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mt: 0.5 }}
+              >
+                Ranked by cumulative index in the current view.
+              </Typography>
             </Box>
 
-            {spotlightZones.length === 0 ? (
+            {spotlightSectors.length === 0 ? (
               <Typography color="text.secondary">
-                Seed data to see zone totals.
+                Load a scenario to see ranked sectors.
               </Typography>
             ) : (
               <Stack spacing={1.25}>
-                {spotlightZones.map((zone, index) => (
+                {spotlightSectors.map((sector, index) => (
                   <Box
-                    key={zone.zone}
+                    key={sector.sector}
                     sx={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                       gap: 1.5,
-                      p: 1.5,
+                      p: 1.85,
                       borderRadius: 4,
                       bgcolor: "grey.50"
                     }}
@@ -116,15 +123,17 @@ export function InsightPanels({
                         variant="outlined"
                       />
                       <Box>
-                        <Typography fontWeight={700}>{zone.zone}</Typography>
+                        <Typography fontWeight={700}>
+                          {sector.sector}
+                        </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Cumulative AQI pressure in the current Cluj scope:{" "}
-                          {formatOneDecimal(zone.totalAirQualityIndex)}
+                          Cumulative index in the current view:{" "}
+                          {formatOneDecimal(sector.totalPerimeterIndex)}
                         </Typography>
                       </Box>
                     </Stack>
                     <Typography fontWeight={700}>
-                      {formatOneDecimal(zone.totalAirQualityIndex)}
+                      {formatOneDecimal(sector.totalPerimeterIndex)}
                     </Typography>
                   </Box>
                 ))}

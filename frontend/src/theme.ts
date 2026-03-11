@@ -62,6 +62,22 @@ export const appTheme = createTheme({
         }
       }
     },
+    MuiCardContent: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          padding: theme.spacing(3),
+          [theme.breakpoints.down("sm")]: {
+            padding: theme.spacing(3.25)
+          },
+          "&:last-child": {
+            paddingBottom: theme.spacing(3),
+            [theme.breakpoints.down("sm")]: {
+              paddingBottom: theme.spacing(3.25)
+            }
+          }
+        })
+      }
+    },
     MuiButton: {
       defaultProps: {
         disableElevation: true

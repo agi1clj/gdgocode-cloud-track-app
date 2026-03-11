@@ -19,36 +19,38 @@ type DashboardHeroProps = {
   summary: Summary;
   lastUpdatedLabel: string;
   scope: string;
+  criticalCount: number;
 };
 
 export function DashboardHero({
   deliverySignals,
   summary,
   lastUpdatedLabel,
-  scope
+  scope,
+  criticalCount
 }: DashboardHeroProps) {
   const apiBaseUrl = getApiBaseUrl();
   const heroStats = [
     {
       tone: "blue",
-      label: "Monitoring scope",
-      value: scope === "all" ? "All monitored zones" : scope
+      label: "Scope",
+      value: scope === "all" ? "All sectors" : scope
     },
     {
       tone: "green",
       label: "Latest batch",
-      value: `${summary.readingCount} readings`
+      value: `${summary.readingCount} events`
     },
     {
       tone: "red",
-      label: "Highest-pressure zone",
-      value: summary.peakZone
+      label: "Peak sector",
+      value: summary.peakSector
     }
   ] as const;
-  const aqiBands = [
-    { label: "Good", range: "0-50", color: "#388E3C" },
-    { label: "Moderate", range: "51-100", color: "#F2BD42" },
-    { label: "Unhealthy", range: "101+", color: "#D95040" }
+  const perimeterBands = [
+    { label: "Stable", range: "0-30", color: "#388E3C" },
+    { label: "Watch", range: "31-60", color: "#F2BD42" },
+    { label: "Critical", range: "61+", color: "#D95040" }
   ] as const;
   const statToneStyles = {
     blue: {
@@ -87,6 +89,10 @@ export function DashboardHero({
         "@keyframes heroBars": {
           "0%, 100%": { transform: "scaleY(0.65)" },
           "50%": { transform: "scaleY(1)" }
+        },
+        "@keyframes alertSweep": {
+          "0%": { transform: "translateX(-120%)" },
+          "100%": { transform: "translateX(220%)" }
         }
       }}
     >
@@ -154,12 +160,12 @@ export function DashboardHero({
                   overflowWrap: "anywhere"
                 }}
               >
-                Cluj-Napoca Air Quality
+                Perimeter Watch
               </Typography>
 
               <Typography
                 sx={{
-                  maxWidth: { xs: "26ch", sm: "40ch", md: "46ch" },
+                  maxWidth: { xs: "26ch", sm: "44ch", md: "56ch" },
                   color: "text.secondary",
                   fontSize: { xs: "0.98rem", sm: "1.08rem", md: "1.2rem" },
                   lineHeight: 1.5
@@ -169,13 +175,14 @@ export function DashboardHero({
                   component="span"
                   sx={{ display: { xs: "inline", sm: "none" } }}
                 >
-                  Live AQI and PM2.5 for Cluj in one view.
+                  Live perimeter view across Romania sectors.
                 </Box>
                 <Box
                   component="span"
                   sx={{ display: { xs: "none", sm: "inline" } }}
                 >
-                  Live AQI, hotspot zones, and PM2.5 in one city view.
+                  Track hot sectors, rising risk, and where operators should
+                  focus next.
                 </Box>
               </Typography>
 
@@ -205,7 +212,7 @@ export function DashboardHero({
                         width: 4,
                         height,
                         borderRadius: 999,
-                        bgcolor: index === 3 ? "#388E3C" : "#4285F4",
+                        bgcolor: index === 3 ? "#D95040" : "#4285F4",
                         transformOrigin: "bottom",
                         animation: `heroBars ${1.4 + index * 0.18}s ease-in-out infinite`
                       }}
@@ -213,7 +220,7 @@ export function DashboardHero({
                   ))}
                 </Box>
                 <Typography variant="body2" color="text.secondary">
-                  Monitoring signal live
+                  Sensor net live
                 </Typography>
               </Stack>
 
@@ -236,7 +243,7 @@ export function DashboardHero({
                         xs: index < compactHeroStats.length ? "block" : "none",
                         md: "block"
                       },
-                      p: 2,
+                      p: 2.35,
                       borderRadius: 4,
                       bgcolor: statToneStyles[item.tone].backgroundColor,
                       border: `1px solid ${statToneStyles[item.tone].borderColor}`,
@@ -306,11 +313,73 @@ export function DashboardHero({
                   OpenAPI
                 </Button>
               </Stack>
+
+              {criticalCount > 0 ? (
+                <Box
+                  sx={{
+                    position: "relative",
+                    overflow: "hidden",
+                    p: { xs: 1.85, md: 2.1 },
+                    borderRadius: 4,
+                    bgcolor: alpha("#D95040", 0.1),
+                    border: `1px solid ${alpha("#D95040", 0.2)}`
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      inset: 0,
+                      background:
+                        "linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.28) 45%, transparent 60%)",
+                      animation: "alertSweep 3.4s linear infinite"
+                    }}
+                  />
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.25}
+                    alignItems={{ xs: "flex-start", sm: "center" }}
+                    justifyContent="space-between"
+                    sx={{ position: "relative", zIndex: 1 }}
+                  >
+                    <Stack direction="row" spacing={1.1} alignItems="center">
+                      <Box
+                        sx={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: "50%",
+                          bgcolor: "#D95040",
+                          boxShadow: "0 0 0 8px rgba(217,80,64,0.14)",
+                          animation: "heroPulse 1.6s ease-in-out infinite"
+                        }}
+                      />
+                      <Box>
+                        <Typography
+                          variant="overline"
+                          sx={{ color: "#B53A2D", fontWeight: 800 }}
+                        >
+                          Critical Alert
+                        </Typography>
+                        <Typography sx={{ fontWeight: 700 }}>
+                          {criticalCount} critical sector
+                          {criticalCount > 1 ? "s" : ""} detected
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ maxWidth: { xs: "none", sm: "30ch" } }}
+                    >
+                      Review {summary.peakSector} now.
+                    </Typography>
+                  </Stack>
+                </Box>
+              ) : null}
             </Stack>
 
             <Card
               variant="outlined"
-              aria-label="AQI scale"
+              aria-label="Perimeter index scale"
               sx={{
                 bgcolor: alpha("#fff", 0.92),
                 borderColor: alpha("#4285F4", 0.12),
@@ -327,13 +396,13 @@ export function DashboardHero({
                       variant="overline"
                       sx={{ color: "primary.main", fontWeight: 700 }}
                     >
-                      AQI snapshot
+                      Perimeter snapshot
                     </Typography>
                     <Typography
                       variant="h6"
                       sx={{ fontSize: { xs: "1.15rem", md: "1.25rem" } }}
                     >
-                      Average AQI {summary.averageAirQualityIndex.toFixed(1)}
+                      Average index {summary.averagePerimeterIndex.toFixed(1)}
                     </Typography>
                   </Box>
 
@@ -381,7 +450,7 @@ export function DashboardHero({
                   </Box>
 
                   <Stack spacing={1.25}>
-                    {aqiBands.map((band) => (
+                    {perimeterBands.map((band) => (
                       <Box
                         key={band.label}
                         sx={{
@@ -406,6 +475,15 @@ export function DashboardHero({
                       </Box>
                     ))}
                   </Stack>
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ pt: 0.5, lineHeight: 1.45 }}
+                  >
+                    Index combines signal severity and incident count for each
+                    sector.
+                  </Typography>
                 </Stack>
               </CardContent>
             </Card>

@@ -27,7 +27,7 @@ export async function fetchReadings() {
 
   if (!response.ok) {
     throw new Error(
-      await parseApiError(response, "Failed to load readings from the backend.")
+      await parseApiError(response, "Failed to load events from the backend.")
     );
   }
 
@@ -41,7 +41,7 @@ export async function seedReadings() {
 
   if (!response.ok) {
     throw new Error(
-      await parseApiError(response, "Failed to seed sample data.")
+      await parseApiError(response, "Failed to seed event data.")
     );
   }
 }
@@ -53,7 +53,7 @@ export async function clearReadings() {
 
   if (!response.ok) {
     throw new Error(
-      await parseApiError(response, "Failed to clear the sample data.")
+      await parseApiError(response, "Failed to clear the event data.")
     );
   }
 }

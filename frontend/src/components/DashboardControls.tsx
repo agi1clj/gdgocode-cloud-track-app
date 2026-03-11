@@ -70,8 +70,7 @@ export function DashboardControls({
                 color="text.secondary"
                 sx={{ mt: 0.5, display: { xs: "none", sm: "block" } }}
               >
-                Zone filter and data actions for the current Cluj-Napoca AQI
-                view.{" "}
+                Filter sectors and run scenarios.{" "}
                 {readOnly ? "Read-only mode is active." : lastUpdatedLabel}
               </Typography>
               <Typography
@@ -81,7 +80,7 @@ export function DashboardControls({
               >
                 {readOnly
                   ? "Read-only mode. Refresh remains available."
-                  : "Filter zones and refresh the AQI feed."}
+                  : "Filter sectors and refresh data."}
               </Typography>
             </Box>
 
@@ -122,9 +121,11 @@ export function DashboardControls({
               onClick={onSeed}
               fullWidth
               size="small"
-              sx={{ width: { xs: "100%", md: "auto" }, minWidth: { md: 120 } }}
+              sx={{ width: { xs: "100%", md: "auto" }, minWidth: { md: 150 } }}
             >
-              {seedingState === "loading" ? "Loading scenario..." : "Load"}
+              {seedingState === "loading"
+                ? "Loading scenario..."
+                : "Load scenario"}
             </Button>
             <Button
               variant="contained"
@@ -154,7 +155,7 @@ export function DashboardControls({
         </Box>
         {readOnly ? (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
-            This backend is currently read-only. Sample data mutation actions
+            This backend is currently read-only. Scenario seed and clear actions
             are disabled.
           </Typography>
         ) : null}

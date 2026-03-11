@@ -23,6 +23,7 @@ export function StatCard({ label, value, meta, tone }: StatCardDefinition) {
     >
       <CardContent
         sx={{
+          p: { xs: 2.5, md: 3.25 },
           position: "relative",
           height: "100%",
           display: "flex",
@@ -52,7 +53,8 @@ export function StatCard({ label, value, meta, tone }: StatCardDefinition) {
             variant="body2"
             color="text.secondary"
             sx={{
-              maxWidth: "24ch",
+              maxWidth: "20ch",
+              pr: { xs: 5.5, md: 6.5 },
               fontSize: { xs: "0.8rem", md: "0.875rem" }
             }}
           >
@@ -73,10 +75,10 @@ export function StatCard({ label, value, meta, tone }: StatCardDefinition) {
         <Box
           sx={{
             position: "absolute",
-            right: { xs: 16, md: 22 },
-            bottom: { xs: 16, md: 20 },
+            right: { xs: 28, md: 32 },
+            bottom: { xs: 20, md: 26 },
             display: "grid",
-            gap: 0.75
+            gap: 1
           }}
         >
           {Array.from({ length: 3 }, (_, index) => (

@@ -40,6 +40,17 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
   const activePoint =
     hoveredIndex === null ? chartPoints.at(-1) : chartPoints[hoveredIndex];
   const maxValue = Math.max(...points.map((point) => point.value), 1);
+  const labelStep = useMemo(() => {
+    if (points.length <= 6) {
+      return 1;
+    }
+
+    if (isMobile) {
+      return Math.ceil(points.length / 4);
+    }
+
+    return Math.ceil(points.length / 6);
+  }, [isMobile, points.length]);
 
   function handleChartPointerMove(event: React.MouseEvent<SVGSVGElement>) {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -79,13 +90,13 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
               color="text.secondary"
               sx={{ fontWeight: 700 }}
             >
-              AQI trend
+              Perimeter trend
             </Typography>
-            <Typography variant="h5">AQI over time</Typography>
+            <Typography variant="h5">Perimeter index over time</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               {isMobile
-                ? "Hourly AQI change for the current Cluj scope."
-                : "Hour-by-hour AQI movement for the selected Cluj-Napoca scope, useful for spotting a worsening trend before a zone turns critical."}
+                ? "Hourly perimeter change for the current sector scope."
+                : "Hour-by-hour perimeter movement for the selected scope, useful for spotting escalation before a sector turns critical."}
             </Typography>
           </Box>
 
@@ -93,14 +104,14 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
             <Box
               sx={{
                 minWidth: { xs: "auto", md: 180 },
-                p: { xs: 1.5, md: 2 },
+                p: { xs: 1.85, md: 2.2 },
                 borderRadius: 4,
                 bgcolor: alpha("#34a853", 0.08),
                 border: `1px solid ${alpha("#388E3C", 0.12)}`
               }}
             >
               <Typography variant="caption" color="text.secondary">
-                Worst hourly AQI
+                Highest hourly index
               </Typography>
               <Typography
                 variant="h4"
@@ -114,7 +125,7 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
 
         {points.length === 0 ? (
           <Typography color="text.secondary">
-            Load a sample scenario to render the chart.
+            Load a scenario to render the chart.
           </Typography>
         ) : (
           <>
@@ -133,7 +144,7 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
                 }}
               >
                 <Typography fontWeight={700}>
-                  {formatOneDecimal(activePoint.value)} AQI
+                  {formatOneDecimal(activePoint.value)} index
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {activePoint.label}
@@ -143,16 +154,17 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
 
             <Box
               sx={{
-                p: { xs: 1.25, md: 2 },
+                p: { xs: 1.6, md: 2 },
                 borderRadius: 4,
-                bgcolor: "rgba(66, 133, 244, 0.04)"
+                bgcolor: "#fff",
+                border: `1px solid ${alpha("#4285F4", 0.08)}`
               }}
             >
               <Box
                 component="svg"
                 viewBox={`0 0 ${width} ${height}`}
                 role="img"
-                aria-label="Cluj-Napoca AQI over time"
+                aria-label="Perimeter index over time"
                 onMouseMove={isMobile ? undefined : handleChartPointerMove}
                 onMouseLeave={
                   isMobile
@@ -218,7 +230,7 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
 
               <Box
                 sx={{
-                  mt: 1.25,
+                  mt: 1,
                   display: "grid",
                   gap: 0.5,
                   gridTemplateColumns: `repeat(${points.length}, minmax(0, 1fr))`
@@ -231,9 +243,14 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
                     color="text.secondary"
                     sx={{
                       textAlign: "center",
-                      fontSize: { xs: "0.62rem", md: "0.75rem" },
+                      fontSize: { xs: "0.6rem", md: "0.72rem" },
+                      lineHeight: 1.1,
                       visibility:
-                        isMobile && index % 2 === 1 ? "hidden" : "visible"
+                        index === 0 ||
+                        index === points.length - 1 ||
+                        index % labelStep === 0
+                          ? "visible"
+                          : "hidden"
                     }}
                   >
                     {point.label}
