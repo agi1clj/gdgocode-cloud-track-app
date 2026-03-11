@@ -22,3 +22,9 @@ export interface ReadingSummary {
   peakAirQualityIndex: number;
   readingCount: number;
 }
+
+export interface ReadingsResponse {
+  readings: Reading[];
+  summary: ReadingSummary;
+  readOnly: boolean;
+}

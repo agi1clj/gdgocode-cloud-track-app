@@ -80,7 +80,7 @@ npm run build
 
 What they do:
 
-- `setup`: creates local `.env` files if missing
+- `setup`: creates local `.env` files if missing and does not overwrite existing ones
 - `dev`: starts the local Docker Compose stack
 - `db:migrate`: runs backend SQL migrations manually
 - `format:check`: checks formatting with Prettier
@@ -104,7 +104,8 @@ Important defaults:
 - backend DB host is `postgres` for Docker Compose
 - frontend API base URL is `http://localhost:3001`
 - backend runs migrations automatically on startup
-- `ENABLE_SEED_ENDPOINT` and `ENABLE_CLEAR_ENDPOINT` default to workshop-friendly enabled behavior unless set to `false`
+- `BACKEND_READ_ONLY` defaults to safe read-only behavior when unset
+- local `backend/.env.example` sets `BACKEND_READ_ONLY=false` so the demo load/clear actions work out of the box
 
 ## App structure
 

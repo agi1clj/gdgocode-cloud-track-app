@@ -59,6 +59,9 @@
  *             $ref: '#/components/schemas/Reading'
  *         summary:
  *           $ref: '#/components/schemas/Summary'
+ *         readOnly:
+ *           type: boolean
+ *           example: true
  */
 export const openApiSchemas = true;
 export {};

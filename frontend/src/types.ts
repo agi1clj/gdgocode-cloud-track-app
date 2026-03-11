@@ -22,6 +22,7 @@ export type DashboardScopeOption = {
 export type ReadingsResponse = {
   readings: Reading[];
   summary: Summary;
+  readOnly: boolean;
 };
 
 export type StatTone = "blue" | "red" | "green" | "yellow";

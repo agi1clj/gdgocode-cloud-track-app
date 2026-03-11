@@ -113,6 +113,7 @@ function App() {
   });
 
   const readings = data?.readings ?? [];
+  const readOnly = data?.readOnly ?? true;
   const scopeOptions = useMemo(
     () => dashboardScopeOptions(readings),
     [readings]
@@ -213,11 +214,18 @@ function App() {
           />
 
           {error ? <Alert severity="error">{error}</Alert> : null}
+          {readOnly ? (
+            <Alert severity="info">
+              Backend is running in read-only mode. Refresh is available, but
+              load and clear actions are disabled.
+            </Alert>
+          ) : null}
 
           <DashboardControls
             loadingState={loadingState}
             seedingState={seedingState}
             resettingState={resettingState}
+            readOnly={readOnly}
             scope={scope}
             scopeOptions={scopeOptions}
             lastUpdatedLabel={lastUpdatedLabel}

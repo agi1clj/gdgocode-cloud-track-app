@@ -169,6 +169,7 @@ frontend_image      = "your-dockerhub-user/gdgocode-cloud-track-frontend:sha-abc
 backend_image       = "your-dockerhub-user/gdgocode-cloud-track-backend:sha-abc1234"
 frontend_event_name = "GDGoCode 2026"
 backend_cors_origin = "*"
+backend_read_only   = true
 ```
 
 Notes:
@@ -179,6 +180,7 @@ Notes:
 - if `db_password` is omitted, OpenTofu generates one and stores it in Secret Manager
 - if you prefer to set it yourself, you can still add `db_password = "..."` to `terraform.tfvars`
 - keep `backend_cors_origin = "*"` for workshop simplicity unless you want stricter CORS
+- keep `backend_read_only = true` for a public read-only backend and set it to `false` only when a demo explicitly needs seed/clear actions
 
 ## 7. Create a GCS bucket for OpenTofu state
 

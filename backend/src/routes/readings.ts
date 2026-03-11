@@ -1,34 +1,34 @@
 import { Router } from "express";
 import {
   clearReadings,
+  isBackendReadOnly,
   listReadings,
   seedReadings
 } from "../services/readings.js";
 
 export const readingsRouter = Router();
 
-function routeEnabled(value: string | undefined) {
-  return value !== "false";
+function readOnlyError() {
+  return {
+    error:
+      "Backend is in read-only mode. Loading and clearing sample data are disabled."
+  };
 }
 
 readingsRouter.get("/", async (_request, response) => {
   response.json(await listReadings());
 });
 readingsRouter.post("/seed", async (_request, response) => {
-  if (!routeEnabled(process.env.ENABLE_SEED_ENDPOINT)) {
-    response.status(404).json({
-      error: "Route not found"
-    });
+  if (isBackendReadOnly()) {
+    response.status(403).json(readOnlyError());
     return;
   }
 
   response.status(201).json(await seedReadings());
 });
 readingsRouter.delete("/", async (_request, response) => {
-  if (!routeEnabled(process.env.ENABLE_CLEAR_ENDPOINT)) {
-    response.status(404).json({
-      error: "Route not found"
-    });
+  if (isBackendReadOnly()) {
+    response.status(403).json(readOnlyError());
     return;
   }
 

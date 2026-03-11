@@ -19,6 +19,7 @@ type DashboardControlsProps = {
   loadingState: ActionState;
   seedingState: ActionState;
   resettingState: ActionState;
+  readOnly: boolean;
   scope: string;
   scopeOptions: DashboardScopeOption[];
   lastUpdatedLabel: string;
@@ -32,6 +33,7 @@ export function DashboardControls({
   loadingState,
   seedingState,
   resettingState,
+  readOnly,
   scope,
   scopeOptions,
   lastUpdatedLabel,
@@ -69,14 +71,16 @@ export function DashboardControls({
                 sx={{ mt: 0.5, display: { xs: "none", sm: "block" } }}
               >
                 Zone filter and data actions for the current Cluj-Napoca AQI
-                view. {lastUpdatedLabel}
+                view. {readOnly ? "Read-only mode is active." : lastUpdatedLabel}
               </Typography>
               <Typography
                 variant="body2"
                 color="text.secondary"
                 sx={{ mt: 0.5, display: { xs: "block", sm: "none" } }}
               >
-                Filter zones and refresh the AQI feed.
+                {readOnly
+                  ? "Read-only mode. Refresh remains available."
+                  : "Filter zones and refresh the AQI feed."}
               </Typography>
             </Box>
 
@@ -113,7 +117,7 @@ export function DashboardControls({
             <Button
               variant="contained"
               startIcon={<ScienceRoundedIcon />}
-              disabled={seedingState === "loading"}
+              disabled={readOnly || seedingState === "loading"}
               onClick={onSeed}
               fullWidth
               size="small"
@@ -137,7 +141,7 @@ export function DashboardControls({
               variant="outlined"
               color="inherit"
               startIcon={<DeleteOutlineRoundedIcon />}
-              disabled={resettingState === "loading"}
+              disabled={readOnly || resettingState === "loading"}
               onClick={onReset}
               fullWidth
               size="small"
@@ -147,6 +151,12 @@ export function DashboardControls({
             </Button>
           </Stack>
         </Box>
+        {readOnly ? (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+            This backend is currently read-only. Sample data mutation actions
+            are disabled.
+          </Typography>
+        ) : null}
       </CardContent>
     </Card>
   );

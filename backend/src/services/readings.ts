@@ -1,6 +1,15 @@
 import { pool } from "../db.js";
 import { sampleReadings } from "../sampleData.js";
-import type { Reading, ReadingRow, ReadingSummary } from "../types.js";
+import type {
+  Reading,
+  ReadingRow,
+  ReadingsResponse,
+  ReadingSummary
+} from "../types.js";
+
+export function isBackendReadOnly() {
+  return process.env.BACKEND_READ_ONLY !== "false";
+}
 
 function mapReading(row: ReadingRow): Reading {
   return {
@@ -41,7 +50,7 @@ export async function getDatabaseTime() {
   return result.rows[0].database_time;
 }
 
-export async function listReadings() {
+export async function listReadings(): Promise<ReadingsResponse> {
   const result = await pool.query<ReadingRow>(
     `SELECT id, zone, recorded_at, air_quality_index, pm25, status
      FROM gdgocode_readings
@@ -52,7 +61,8 @@ export async function listReadings() {
 
   return {
     readings,
-    summary: buildSummary(readings)
+    summary: buildSummary(readings),
+    readOnly: isBackendReadOnly()
   };
 }
 
