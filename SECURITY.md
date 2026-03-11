@@ -23,6 +23,7 @@ It is not a production-ready security baseline.
 ## Important limitations
 
 - Anyone can call the public backend endpoints in deployed workshop environments.
+- The workshop mutation endpoints can be disabled with `ENABLE_SEED_ENDPOINT=false` and `ENABLE_CLEAR_ENDPOINT=false`.
 - The sample API is intentionally simple and should not be used as-is for sensitive workloads.
 - Students should not commit secrets or `.env` files.
 - Cloud SQL access should stay behind the backend app path and not be opened broadly for direct internet access.

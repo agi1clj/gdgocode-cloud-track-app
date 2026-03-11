@@ -104,6 +104,7 @@ Important defaults:
 - backend DB host is `postgres` for Docker Compose
 - frontend API base URL is `http://localhost:3001`
 - backend runs migrations automatically on startup
+- `ENABLE_SEED_ENDPOINT` and `ENABLE_CLEAR_ENDPOINT` default to workshop-friendly enabled behavior unless set to `false`
 
 ## App structure
 
