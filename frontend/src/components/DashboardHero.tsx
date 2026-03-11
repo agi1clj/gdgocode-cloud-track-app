@@ -11,7 +11,7 @@ import {
   Typography
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { API_BASE_URL } from "../config";
+import { getApiBaseUrl } from "../config";
 import type { DeliverySignal, Summary } from "../types";
 
 type DashboardHeroProps = {
@@ -27,6 +27,7 @@ export function DashboardHero({
   lastUpdatedLabel,
   scope
 }: DashboardHeroProps) {
+  const apiBaseUrl = getApiBaseUrl();
   const heroStats = [
     {
       tone: "blue",
@@ -264,7 +265,7 @@ export function DashboardHero({
                 <Button
                   variant="contained"
                   color="primary"
-                  href={`${API_BASE_URL}/docs`}
+                  href={`${apiBaseUrl}/docs`}
                   target="_blank"
                   rel="noreferrer"
                   endIcon={<ArrowOutwardRoundedIcon />}
@@ -274,7 +275,7 @@ export function DashboardHero({
                 </Button>
                 <Button
                   variant="outlined"
-                  href={`${API_BASE_URL}/openapi.json`}
+                  href={`${apiBaseUrl}/openapi.json`}
                   target="_blank"
                   rel="noreferrer"
                   endIcon={<ArrowOutwardRoundedIcon />}

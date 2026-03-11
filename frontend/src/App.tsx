@@ -18,7 +18,7 @@ import { StatCard } from "./components/StatCard";
 import { DashboardControls } from "./components/DashboardControls";
 import { LineChart } from "./components/LineChart";
 import { ZoneBarChart } from "./components/ZoneBarChart";
-import { EVENT_NAME } from "./config";
+import { getEventName } from "./config";
 import {
   clearReadings,
   fetchReadings,
@@ -41,6 +41,7 @@ import type {
 } from "./types";
 
 function App() {
+  const eventName = getEventName();
   const [data, setData] = useState<ReadingsResponse | null>(null);
   const [loadingState, setLoadingState] = useState<ActionState>("loading");
   const [seedingState, setSeedingState] = useState<ActionState>("idle");
@@ -352,7 +353,7 @@ function App() {
                   </Typography>
                   <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                     <Chip
-                      label={EVENT_NAME}
+                      label={eventName}
                       color="primary"
                       variant="outlined"
                     />

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../config";
+import { getApiBaseUrl } from "../config";
 import type { ReadingsResponse } from "../types";
 
 export async function parseApiError(
@@ -14,14 +14,16 @@ export async function parseApiError(
 }
 
 export function logClientError(message: string, error: unknown) {
+  const apiBaseUrl = getApiBaseUrl();
+
   console.error("[gdgocode-cloud-track-frontend]", message, {
     error: error instanceof Error ? error.message : error,
-    apiBaseUrl: API_BASE_URL
+    apiBaseUrl
   });
 }
 
 export async function fetchReadings() {
-  const response = await fetch(`${API_BASE_URL}/api/readings`);
+  const response = await fetch(`${getApiBaseUrl()}/api/readings`);
 
   if (!response.ok) {
     throw new Error(
@@ -33,7 +35,7 @@ export async function fetchReadings() {
 }
 
 export async function seedReadings() {
-  const response = await fetch(`${API_BASE_URL}/api/readings/seed`, {
+  const response = await fetch(`${getApiBaseUrl()}/api/readings/seed`, {
     method: "POST"
   });
 
@@ -45,7 +47,7 @@ export async function seedReadings() {
 }
 
 export async function clearReadings() {
-  const response = await fetch(`${API_BASE_URL}/api/readings`, {
+  const response = await fetch(`${getApiBaseUrl()}/api/readings`, {
     method: "DELETE"
   });
 

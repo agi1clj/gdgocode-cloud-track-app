@@ -7,8 +7,14 @@ declare global {
   }
 }
 
-const runtimeConfig = window.__APP_CONFIG__ || {};
+function getRuntimeConfig() {
+  return window.__APP_CONFIG__ || {};
+}
 
-export const API_BASE_URL =
-  runtimeConfig.VITE_API_BASE_URL || "http://localhost:3001";
-export const EVENT_NAME = runtimeConfig.VITE_EVENT_NAME || "GDGoCode 2026";
+export function getApiBaseUrl() {
+  return getRuntimeConfig().VITE_API_BASE_URL || "http://localhost:3001";
+}
+
+export function getEventName() {
+  return getRuntimeConfig().VITE_EVENT_NAME || "GDGoCode 2026";
+}
