@@ -71,7 +71,8 @@ export function DashboardControls({
                 sx={{ mt: 0.5, display: { xs: "none", sm: "block" } }}
               >
                 Zone filter and data actions for the current Cluj-Napoca AQI
-                view. {readOnly ? "Read-only mode is active." : lastUpdatedLabel}
+                view.{" "}
+                {readOnly ? "Read-only mode is active." : lastUpdatedLabel}
               </Typography>
               <Typography
                 variant="body2"
