@@ -227,7 +227,7 @@ After `tofu apply`, check:
 If you deployed writable mode for a demo:
 
 1. click `Load scenario`
-2. confirm the readings, charts, and status cards populate
+2. confirm the event cards, charts, and status cards populate
 3. optionally click `Clear` and confirm the data resets
 
 ## 11. Cleanup

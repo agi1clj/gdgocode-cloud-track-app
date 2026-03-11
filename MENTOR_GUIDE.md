@@ -22,13 +22,13 @@ The student should follow one clear path:
 
 1. start in [README.md](README.md)
 2. run the app locally
-3. seed and inspect perimeter data
+3. seed and inspect perimeter events
 4. push code to GitHub
 5. open [docs/cloud-deploy-walkthrough.md](docs/cloud-deploy-walkthrough.md)
 6. wait for `Publish Docker Images` to complete
 7. fill in `terraform.tfvars`
 8. run `tofu init`, `tofu validate`, `tofu plan`, `tofu apply`
-9. verify frontend URL, backend health, Swagger docs, and seeded data
+9. verify frontend URL, backend health, Swagger docs, and seeded event data
 
 ## Fast mentor checks
 

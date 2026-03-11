@@ -55,7 +55,7 @@ const readOnlyErrorSchema = z
   .object({
     error: z.string().openapi({
       example:
-        "Backend is in read-only mode. Loading and clearing sample data are disabled."
+        "Backend is in read-only mode. Loading and clearing event data are disabled."
     })
   })
   .openapi("ReadOnlyError");
@@ -96,10 +96,10 @@ registry.registerPath({
   method: "get",
   path: "/api/readings",
   tags: ["Readings"],
-  summary: "List all perimeter readings and operational summary data",
+  summary: "List perimeter events and operational summary data",
   responses: {
     200: {
-      description: "Readings returned successfully",
+      description: "Perimeter events returned successfully",
       content: {
         "application/json": {
           schema: readingsResponseSchema
@@ -113,10 +113,10 @@ registry.registerPath({
   method: "post",
   path: "/api/readings/seed",
   tags: ["Readings"],
-  summary: "Seed the sample perimeter scenario dataset",
+  summary: "Seed the perimeter scenario event dataset",
   responses: {
     201: {
-      description: "Sample readings inserted successfully",
+      description: "Scenario events inserted successfully",
       content: {
         "application/json": {
           schema: seedResponseSchema
@@ -138,10 +138,10 @@ registry.registerPath({
   method: "delete",
   path: "/api/readings",
   tags: ["Readings"],
-  summary: "Clear all readings",
+  summary: "Clear all perimeter events",
   responses: {
     204: {
-      description: "Readings cleared successfully"
+      description: "Perimeter events cleared successfully"
     },
     403: {
       description: "Backend is in read-only mode",
@@ -172,7 +172,7 @@ export const openApiDocument = generator.generateDocument({
   ],
   tags: [
     { name: "Health", description: "Service and database health" },
-    { name: "Readings", description: "Perimeter monitoring data and seed flow" }
+    { name: "Readings", description: "Perimeter event data and seed flow" }
   ]
 });
 

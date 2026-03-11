@@ -18,9 +18,10 @@ Today the main monitoring dataset looks like this:
 - migration source: `backend/src/migrations/001_init_perimeter_monitoring_schema.sql`
 - backend row model: `backend/src/types.ts`
 - backend service logic: `backend/src/services/readings.ts`
-- OpenAPI schema: `backend/src/docs/schemas.ts`
+- OpenAPI schema: `backend/src/docs/openapi.ts`
 - frontend response types: `frontend/src/types.ts`
 - frontend fetch layer: `frontend/src/lib/api.ts`
+- frontend derived metrics: `frontend/src/lib/perimeter.ts`
 - frontend dashboard composition: `frontend/src/App.tsx` and `frontend/src/components/*`
 
 ## Important rule
@@ -120,7 +121,7 @@ Also update:
 
 ## 4. Update the OpenAPI schema
 
-Update `backend/src/docs/schemas.ts` so `/docs` and `/openapi.json` stay correct.
+Update `backend/src/docs/openapi.ts` so `/docs` and `/openapi.json` stay correct.
 
 If the response shape changed, document the new property under:
 
@@ -133,7 +134,7 @@ If the response shape changed, document the new property under:
 If the backend response changed, update:
 
 - `frontend/src/types.ts`
-- any derived dashboard logic in `frontend/src/lib/dashboard.ts`
+- any derived dashboard logic in `frontend/src/lib/perimeter.ts`
 - any component using the changed field in `frontend/src/components/*`
 
 Typical examples:
@@ -186,9 +187,9 @@ You need to update:
 - new SQL migration with `ALTER TABLE ... RENAME COLUMN ...`
 - `backend/src/types.ts`
 - `backend/src/services/readings.ts`
-- `backend/src/docs/schemas.ts`
+- `backend/src/docs/openapi.ts`
 - `frontend/src/types.ts`
-- `frontend/src/lib/dashboard.ts`
+- `frontend/src/lib/perimeter.ts`
 - any UI component using the old field name
 
 ### Add a derived summary field
@@ -201,7 +202,7 @@ You do need to update:
 
 - `backend/src/types.ts`
 - `backend/src/services/readings.ts` in `buildSummary()`
-- `backend/src/docs/schemas.ts`
+- `backend/src/docs/openapi.ts`
 - `frontend/src/types.ts`
 - UI that displays the new summary field
 
@@ -215,7 +216,7 @@ Minimum backend areas to update:
 - `backend/src/services/readings.ts` queries
 - seed logic in `backend/src/sampleData.ts` and `seedReadings()`
 - API response types in `backend/src/types.ts`
-- OpenAPI docs in `backend/src/docs/schemas.ts`
+- OpenAPI docs in `backend/src/docs/openapi.ts`
 
 ## If you want to change the current domain model entirely
 

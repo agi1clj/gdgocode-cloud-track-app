@@ -16,10 +16,10 @@ This repo contains the application code. Cloud infrastructure lives in the compa
 
 The starter models a Romania-themed perimeter monitoring scenario with several monitored sectors.
 
-Each reading contains:
+Each event contains:
 
 - `sector`: where the signal came from
-- `recordedAt`: when the reading was captured
+- `recordedAt`: when the event was captured
 - `perimeterIndex`: a simple risk score for that sector
 - `incidentCount`: how many suspicious events contributed to the score
 - `status`: `NORMAL`, `WATCH`, or `CRITICAL`
@@ -127,6 +127,7 @@ Important defaults:
 - backend runs migrations automatically on startup
 - `BACKEND_READ_ONLY` defaults to safe read-only behavior when unset
 - local `backend/.env.example` sets `BACKEND_READ_ONLY=false` so the demo load/clear actions work out of the box
+- for a cloud demo that needs `Load scenario` or `Clear`, set `backend_read_only = false` in infra before deploy
 
 ## App structure
 
@@ -143,7 +144,9 @@ Frontend:
 - [App.tsx](frontend/src/App.tsx)
 - [DashboardHero.tsx](frontend/src/components/DashboardHero.tsx)
 - [DashboardControls.tsx](frontend/src/components/DashboardControls.tsx)
+- [SectorBarChart.tsx](frontend/src/components/SectorBarChart.tsx)
 - [ReadingsSection.tsx](frontend/src/components/ReadingsSection.tsx)
+- [perimeter.ts](frontend/src/lib/perimeter.ts)
 - [config.ts](frontend/src/config.ts)
 
 ## API overview
