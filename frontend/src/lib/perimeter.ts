@@ -87,3 +87,13 @@ export function averageIncidentCount(readings: Reading[]) {
 export function criticalSectorCount(readings: Reading[]) {
   return readings.filter((reading) => reading.status === "CRITICAL").length;
 }
+
+export function criticalSectors(readings: Reading[]) {
+  return [
+    ...new Set(
+      readings
+        .filter((reading) => reading.status === "CRITICAL")
+        .map((reading) => reading.sector)
+    )
+  ];
+}

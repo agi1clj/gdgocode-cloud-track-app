@@ -29,6 +29,7 @@ import { deliverySignals } from "./lib/dashboard";
 import {
   averageIncidentCount,
   criticalSectorCount,
+  criticalSectors,
   perimeterScopeOptions,
   perimeterSeries,
   summarizeReadings,
@@ -217,6 +218,7 @@ function App() {
             lastUpdatedLabel={lastUpdatedLabel}
             scope={scope}
             criticalCount={criticalSectorCount(filteredReadings)}
+            criticalSectors={criticalSectors(filteredReadings)}
           />
 
           {error ? <Alert severity="error">{error}</Alert> : null}
@@ -310,7 +312,7 @@ function App() {
                     whiteSpace: { xs: "normal", xl: "nowrap" }
                   }}
                 >
-                  Site posture at a glance.
+                  Site posture at a glance
                 </Typography>
               </Box>
               <InsightPanels
@@ -355,7 +357,7 @@ function App() {
                     variant="h5"
                     sx={{ fontSize: { xs: "1.35rem", md: "1.5rem" } }}
                   >
-                    Built to feel like a believable defense dashboard.
+                    Built to feel like a believable defense dashboard
                   </Typography>
                   <Typography
                     color="text.secondary"

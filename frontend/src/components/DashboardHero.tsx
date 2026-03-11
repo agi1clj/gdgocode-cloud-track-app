@@ -20,6 +20,7 @@ type DashboardHeroProps = {
   lastUpdatedLabel: string;
   scope: string;
   criticalCount: number;
+  criticalSectors: string[];
 };
 
 export function DashboardHero({
@@ -27,9 +28,18 @@ export function DashboardHero({
   summary,
   lastUpdatedLabel,
   scope,
-  criticalCount
+  criticalCount,
+  criticalSectors
 }: DashboardHeroProps) {
   const apiBaseUrl = getApiBaseUrl();
+  const criticalAlertLabel =
+    criticalSectors.length === 0
+      ? "Review critical sectors now."
+      : criticalSectors.length === 1
+        ? `Review ${criticalSectors[0]} now.`
+        : criticalSectors.length === 2
+          ? `Review ${criticalSectors[0]} and ${criticalSectors[1]} now.`
+          : `Review ${criticalSectors[0]}, ${criticalSectors[1]}, and ${criticalSectors.length - 2} more now.`;
   const heroStats = [
     {
       tone: "blue",
@@ -370,7 +380,7 @@ export function DashboardHero({
                       color="text.secondary"
                       sx={{ maxWidth: { xs: "none", sm: "30ch" } }}
                     >
-                      Review {summary.peakSector} now.
+                      {criticalAlertLabel}
                     </Typography>
                   </Stack>
                 </Box>
