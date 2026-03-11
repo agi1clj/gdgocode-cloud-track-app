@@ -39,6 +39,13 @@ export function createApp() {
   );
   app.use("/api", apiRateLimit);
 
+  app.get("/", (_request, response) => {
+    response.status(200).json({
+      status: "ok",
+      message: "Service is up"
+    });
+  });
+
   app.get("/openapi.json", (_request, response) => {
     response.setHeader(
       "Cache-Control",

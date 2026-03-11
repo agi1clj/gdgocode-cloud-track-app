@@ -41,6 +41,23 @@ Stop the stack:
 docker compose down
 ```
 
+## Recommended tutorial path
+
+Follow the docs in this order:
+
+1. start here in `README.md`
+2. run the app locally and confirm the AQI dashboard works
+3. push the app code to GitHub
+4. continue with [docs/cloud-deploy-walkthrough.md](docs/cloud-deploy-walkthrough.md)
+5. let GitHub Actions publish the Docker images
+6. apply the infra from the infra repo
+
+Use this split on purpose:
+
+- `README.md`: local setup, project structure, and app sanity checks
+- `docs/cloud-deploy-walkthrough.md`: tutorial for GitHub push, image publishing, infra apply, and cloud verification
+- `docs/schema-migration-guide.md`: workflow for database or API shape changes
+
 ## Core commands
 
 From the repo root:
@@ -113,24 +130,29 @@ Docs endpoints:
 
 ## Cloud deployment
 
-Use the walkthrough:
+After the local app works, continue with:
 
 - [docs/cloud-deploy-walkthrough.md](docs/cloud-deploy-walkthrough.md)
 
 That guide covers:
 
 1. local sanity checks
-2. Docker image build and push
-3. OpenTofu configuration in the infra repo
-4. Cloud Run + Cloud SQL deployment
-5. post-deploy verification
-6. cleanup
+2. pushing code to GitHub
+3. GitHub Actions image publishing
+4. OpenTofu configuration in the infra repo
+5. Cloud Run + Cloud SQL deployment
+6. post-deploy verification
+7. cleanup
 
 Important detail:
 
-- the infra repo expects Docker Hub images named:
-  - `<dockerhub_username>/<frontend_image_repository>:<tag>`
-  - `<dockerhub_username>/<backend_image_repository>:<tag>`
+- the infra repo expects full image references:
+  - `frontend_image`
+  - `backend_image`
+- the preferred image publishing path is:
+  - push code to `main`
+  - wait for `Publish Docker Images`
+  - copy the exact image refs into `terraform.tfvars`
 - `db_password` is optional in infra; if omitted, OpenTofu generates it and stores it in Secret Manager
 
 ## Schema changes

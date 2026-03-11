@@ -10,34 +10,6 @@ The short version:
 4. update frontend types and UI if the response shape changed
 5. run migrations, typecheck, and build
 
-## Mentor summary
-
-If a student team wants to change the data model, mentors should tell them to
-follow this order and not skip steps:
-
-1. create a new SQL migration file, never edit an old applied migration
-2. update backend types and query mapping
-3. update OpenAPI docs
-4. update frontend types and dashboard components
-5. run `npm run check` and `npm run build`
-6. verify `/docs`, `GET /api/readings`, and the dashboard UI
-
-Mentor review focus:
-
-- the migration is additive or intentionally breaking
-- seed data still works
-- backend and frontend types stay aligned
-- the API docs reflect the new response
-- the UI does not silently ignore the new field
-
-Mentor red flags:
-
-- student edited `001_init_air_quality_schema.sql` after it was already used
-- SQL changed but `backend/src/types.ts` did not
-- backend response changed but `frontend/src/types.ts` did not
-- `/docs` still shows the old schema
-- build passes only for frontend or only for backend, not both
-
 ## Current flow
 
 Today the main AQI dataset looks like this:
@@ -257,45 +229,6 @@ Minimum backend areas to update:
 - OpenAPI docs in `backend/src/docs/schemas.ts`
 
 Treat this as an API refactor, not just a SQL change.
-
-## Backward compatibility advice
-
-If students or teammates already depend on the current API, prefer additive changes first:
-
-- add a new field
-- keep the old field temporarily
-- update frontend usage
-- remove the old field in a later migration/release
-
-This is safer than renaming or removing fields immediately.
-
-## Mentor review checklist
-
-Use this when reviewing a team PR or helping live during the workshop:
-
-1. check that a new migration file was added under `backend/src/migrations/`
-2. confirm the migration filename sorts correctly, for example `002_...sql`
-3. confirm sample data still matches the new schema if seeding is used
-4. confirm `backend/src/types.ts` matches the SQL shape
-5. confirm `backend/src/services/readings.ts` selects, maps, and inserts the new fields
-6. confirm `backend/src/docs/schemas.ts` matches the API response
-7. confirm `frontend/src/types.ts` matches the backend response
-8. confirm the dashboard actually displays or intentionally ignores the new field
-9. run `npm run check`
-10. run `npm run build`
-
-## Suggested checklist for PRs
-
-- new migration file added under `backend/src/migrations/`
-- sample data updated if needed
-- backend types updated
-- service queries and mapping updated
-- OpenAPI docs updated
-- frontend types updated
-- dashboard UI updated
-- `npm run check` passes
-- `npm run build` passes
-- `/docs` reflects the new contract
 
 ## Files you will most often touch
 
