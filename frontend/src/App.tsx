@@ -205,7 +205,14 @@ function App() {
       }}
     >
       <Container maxWidth="xl">
-        <Box component="main" sx={{ display: "grid", gap: { xs: 2, md: 2.5 } }}>
+        <Box
+          component="main"
+          sx={{
+            display: "grid",
+            gap: { xs: 2, md: 2.5 },
+            gridTemplateColumns: "minmax(0, 1fr)"
+          }}
+        >
           <DashboardHero
             deliverySignals={deliverySignals}
             summary={summary}

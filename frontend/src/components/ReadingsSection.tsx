@@ -142,86 +142,175 @@ export function ReadingsSection({
               </Typography>
             </Box>
           ) : (
-            <TableContainer
-              sx={{
-                borderRadius: 4,
-                border: "1px solid",
-                borderColor: "divider",
-                bgcolor: alpha("#fff", 0.92),
-                overflowX: "auto",
-                "&::-webkit-scrollbar": {
-                  height: 8
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: alpha("#4285F4", 0.22),
-                  borderRadius: 999
-                }
-              }}
-            >
-              <Table
+            <>
+              <Stack
                 sx={{
-                  minWidth: { xs: 820, md: 760 },
-                  "& .MuiTableCell-root:first-of-type": {
-                    pl: { xs: 3, md: 4.5 },
-                    minWidth: 210,
-                    whiteSpace: "nowrap"
-                  },
-                  "& .MuiTableCell-root:last-of-type": {
-                    pr: { xs: 3, md: 4 }
-                  }
+                  display: { xs: "flex", md: "none" },
+                  gap: 1.25
                 }}
               >
-                <TableHead sx={{ bgcolor: alpha("#4285F4", 0.05) }}>
-                  <TableRow>
-                    <TableCell>Neighborhood</TableCell>
-                    <TableCell>Time</TableCell>
-                    <TableCell>AQI</TableCell>
-                    <TableCell>PM2.5</TableCell>
-                    <TableCell>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {readings.map((reading, index) => (
-                    <TableRow
-                      key={reading.id}
-                      hover
-                      sx={{
-                        animationDelay: `${index * 70}ms`
-                      }}
-                    >
-                      <TableCell sx={{ fontWeight: 600 }}>
-                        {reading.zone}
-                      </TableCell>
-                      <TableCell>
-                        {formatDateTime(reading.recordedAt)}
-                      </TableCell>
-                      <TableCell>
-                        {formatOneDecimal(reading.airQualityIndex)}
-                      </TableCell>
-                      <TableCell>{reading.pm25}</TableCell>
-                      <TableCell>
+                {readings.map((reading) => (
+                  <Box
+                    key={reading.id}
+                    sx={{
+                      p: 1.5,
+                      borderRadius: 3,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      bgcolor: alpha("#fff", 0.94)
+                    }}
+                  >
+                    <Stack spacing={1}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          justifyContent: "space-between",
+                          gap: 1
+                        }}
+                      >
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography sx={{ fontWeight: 700 }}>
+                            {reading.zone}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 0.25 }}
+                          >
+                            {formatDateTime(reading.recordedAt)}
+                          </Typography>
+                        </Box>
                         <Box
                           component="span"
                           sx={{
                             display: "inline-flex",
-                            px: 1.25,
-                            py: 0.5,
+                            px: 1.1,
+                            py: 0.45,
                             borderRadius: 999,
                             bgcolor: statusTone(reading.status).bg,
                             color: statusTone(reading.status).color,
                             fontWeight: 700,
-                            fontSize: "0.75rem",
-                            letterSpacing: "0.04em"
+                            fontSize: "0.72rem",
+                            letterSpacing: "0.04em",
+                            whiteSpace: "nowrap"
                           }}
                         >
                           {reading.status}
                         </Box>
-                      </TableCell>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                          gap: 1
+                        }}
+                      >
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">
+                            AQI
+                          </Typography>
+                          <Typography sx={{ fontWeight: 700 }}>
+                            {formatOneDecimal(reading.airQualityIndex)}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">
+                            PM2.5
+                          </Typography>
+                          <Typography sx={{ fontWeight: 700 }}>
+                            {reading.pm25}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Stack>
+                  </Box>
+                ))}
+              </Stack>
+
+              <TableContainer
+                sx={{
+                  display: { xs: "none", md: "block" },
+                  borderRadius: 4,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  bgcolor: alpha("#fff", 0.92),
+                  overflowX: "auto",
+                  "&::-webkit-scrollbar": {
+                    height: 8
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: alpha("#4285F4", 0.22),
+                    borderRadius: 999
+                  }
+                }}
+              >
+                <Table
+                  sx={{
+                    minWidth: 760,
+                    "& .MuiTableCell-root:first-of-type": {
+                      pl: 4.5,
+                      minWidth: 210,
+                      whiteSpace: "nowrap"
+                    },
+                    "& .MuiTableCell-root:last-of-type": {
+                      pr: 4
+                    }
+                  }}
+                >
+                  <TableHead sx={{ bgcolor: alpha("#4285F4", 0.05) }}>
+                    <TableRow>
+                      <TableCell>Neighborhood</TableCell>
+                      <TableCell>Time</TableCell>
+                      <TableCell>AQI</TableCell>
+                      <TableCell>PM2.5</TableCell>
+                      <TableCell>Status</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {readings.map((reading, index) => (
+                      <TableRow
+                        key={reading.id}
+                        hover
+                        sx={{
+                          animationDelay: `${index * 70}ms`
+                        }}
+                      >
+                        <TableCell sx={{ fontWeight: 600 }}>
+                          {reading.zone}
+                        </TableCell>
+                        <TableCell>
+                          {formatDateTime(reading.recordedAt)}
+                        </TableCell>
+                        <TableCell>
+                          {formatOneDecimal(reading.airQualityIndex)}
+                        </TableCell>
+                        <TableCell>{reading.pm25}</TableCell>
+                        <TableCell>
+                          <Box
+                            component="span"
+                            sx={{
+                              display: "inline-flex",
+                              px: 1.25,
+                              py: 0.5,
+                              borderRadius: 999,
+                              bgcolor: statusTone(reading.status).bg,
+                              color: statusTone(reading.status).color,
+                              fontWeight: 700,
+                              fontSize: "0.75rem",
+                              letterSpacing: "0.04em"
+                            }}
+                          >
+                            {reading.status}
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </>
           )}
         </CardContent>
       </Card>

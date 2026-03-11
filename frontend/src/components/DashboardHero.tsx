@@ -138,17 +138,20 @@ export function DashboardHero({
                 xs: "1fr",
                 xl: "minmax(0, 1.1fr) 340px"
               },
-              alignItems: "start"
+              alignItems: "start",
+              minWidth: 0,
+              width: "100%"
             }}
           >
-            <Stack spacing={2.5}>
+            <Stack spacing={2.5} sx={{ minWidth: 0, width: "100%" }}>
               <Typography
                 variant="h1"
                 sx={{
                   fontSize: { xs: "2.15rem", sm: "3.4rem", md: "4.6rem" },
-                  maxWidth: { xs: "30ch", sm: "30ch", md: "30ch" },
+                  maxWidth: { xs: "100%", sm: "30ch", md: "30ch" },
                   lineHeight: { xs: 0.98, sm: 0.92 },
-                  letterSpacing: "-0.04em"
+                  letterSpacing: "-0.04em",
+                  overflowWrap: "anywhere"
                 }}
               >
                 Cluj-Napoca Air Quality
@@ -221,7 +224,8 @@ export function DashboardHero({
                   gridTemplateColumns: {
                     xs: "repeat(2, minmax(0, 1fr))",
                     md: "repeat(3, minmax(0, 1fr))"
-                  }
+                  },
+                  minWidth: 0
                 }}
               >
                 {heroStats.map((item, index) => (
@@ -235,7 +239,8 @@ export function DashboardHero({
                       p: 2,
                       borderRadius: 4,
                       bgcolor: statToneStyles[item.tone].backgroundColor,
-                      border: `1px solid ${statToneStyles[item.tone].borderColor}`
+                      border: `1px solid ${statToneStyles[item.tone].borderColor}`,
+                      minWidth: 0
                     }}
                   >
                     <Typography
@@ -252,7 +257,8 @@ export function DashboardHero({
                       sx={{
                         mt: 0.5,
                         fontWeight: 700,
-                        fontSize: { xs: "0.95rem", md: "1rem" }
+                        fontSize: { xs: "0.95rem", md: "1rem" },
+                        overflowWrap: "anywhere"
                       }}
                     >
                       {item.value}
@@ -261,7 +267,11 @@ export function DashboardHero({
                 ))}
               </Box>
 
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.25}
+                sx={{ width: "100%" }}
+              >
                 <Button
                   variant="contained"
                   color="primary"
@@ -270,6 +280,8 @@ export function DashboardHero({
                   rel="noreferrer"
                   endIcon={<ArrowOutwardRoundedIcon />}
                   size="small"
+                  fullWidth
+                  sx={{ width: { xs: "100%", sm: "auto" } }}
                 >
                   API docs
                 </Button>
@@ -280,7 +292,9 @@ export function DashboardHero({
                   rel="noreferrer"
                   endIcon={<ArrowOutwardRoundedIcon />}
                   size="small"
+                  fullWidth
                   sx={{
+                    width: { xs: "100%", sm: "auto" },
                     color: "text.primary",
                     borderColor: alpha("#4285F4", 0.22),
                     "&:hover": {
@@ -301,7 +315,9 @@ export function DashboardHero({
                 bgcolor: alpha("#fff", 0.92),
                 borderColor: alpha("#4285F4", 0.12),
                 color: "text.primary",
-                height: "100%"
+                height: "100%",
+                minWidth: 0,
+                width: "100%"
               }}
             >
               <CardContent>
