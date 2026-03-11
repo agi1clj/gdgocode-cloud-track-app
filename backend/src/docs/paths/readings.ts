@@ -12,15 +12,6 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ReadingsResponse'
- *   post:
- *     tags:
- *       - Readings
- *     summary: Seed the sample readings dataset
- *     responses:
- *       201:
- *         description: Sample readings inserted successfully
- *       403:
- *         description: Backend is in read-only mode
  *   delete:
  *     tags:
  *       - Readings
@@ -28,6 +19,16 @@
  *     responses:
  *       204:
  *         description: Readings cleared successfully
+ *       403:
+ *         description: Backend is in read-only mode
+ * /api/readings/seed:
+ *   post:
+ *     tags:
+ *       - Readings
+ *     summary: Seed the sample readings dataset
+ *     responses:
+ *       201:
+ *         description: Sample readings inserted successfully
  *       403:
  *         description: Backend is in read-only mode
  */
