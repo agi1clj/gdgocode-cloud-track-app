@@ -53,6 +53,33 @@ Make sure these GitHub repository secrets exist:
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_TOKEN`
 
+Recommended setup:
+
+1. Sign in to Docker Hub.
+2. Open `Account settings`.
+3. Open the `Personal access tokens` section.
+4. Create a new token for GitHub Actions.
+5. Copy the token value immediately and store it somewhere temporary. Docker Hub will not show the full token again later.
+6. In the GitHub app repository, open `Settings` -> `Secrets and variables` -> `Actions`.
+7. Add a new repository secret named `DOCKERHUB_USERNAME` with your Docker Hub username as the value.
+8. Add a new repository secret named `DOCKERHUB_TOKEN` with the Docker Hub personal access token as the value.
+9. Push a commit to `main` or manually run the `Publish Docker Images` workflow to confirm the login succeeds.
+
+If you prefer GitHub CLI, you can set the secrets from the app repo with:
+
+```bash
+gh secret set DOCKERHUB_USERNAME
+gh secret set DOCKERHUB_TOKEN
+```
+
+Common mistakes in this step:
+
+- using a Docker Hub password instead of a personal access token
+- adding the secret to the wrong GitHub repository
+- saving the wrong Docker Hub username
+- rotating the Docker Hub token without updating `DOCKERHUB_TOKEN` in GitHub
+- pushing to a branch other than `main` and expecting the publish workflow to run automatically
+
 ## 3. Sanity-check the app locally
 
 From the app repo:
