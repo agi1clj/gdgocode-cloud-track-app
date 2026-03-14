@@ -207,10 +207,9 @@ Current baseline checks for this repo:
 - `npm audit --audit-level=high` in `frontend/`
 - `npm audit --audit-level=high` in `backend/`
 
-## Companion docs
+## Companion docs - links
 
 - [MENTOR_GUIDE.md](MENTOR_GUIDE.md)
 - [SECURITY.md](SECURITY.md)
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [gdgocode-cloud-track-infra](https://github.com/agi1clj/gdgocode-cloud-track-infra)
-
