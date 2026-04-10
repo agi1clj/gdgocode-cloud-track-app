@@ -56,7 +56,7 @@ export function DashboardControls({
           <Stack
             direction={{ xs: "column", md: "row" }}
             spacing={{ xs: 1.5, md: 2 }}
-            alignItems={{ xs: "stretch", md: "center" }}
+            sx={{ alignItems: { xs: "stretch", md: "center" } }}
           >
             <Box sx={{ minWidth: 0 }}>
               <Typography

@@ -114,7 +114,11 @@ export function InsightPanels({
                       bgcolor: "grey.50"
                     }}
                   >
-                    <Stack direction="row" spacing={1.5} alignItems="center">
+                    <Stack
+                      direction="row"
+                      spacing={1.5}
+                      sx={{ alignItems: "center" }}
+                    >
                       <Chip
                         icon={<ApartmentRoundedIcon />}
                         label={`0${index + 1}`}
@@ -123,7 +127,7 @@ export function InsightPanels({
                         variant="outlined"
                       />
                       <Box>
-                        <Typography fontWeight={700}>
+                        <Typography sx={{ fontWeight: 700 }}>
                           {sector.sector}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -132,7 +136,7 @@ export function InsightPanels({
                         </Typography>
                       </Box>
                     </Stack>
-                    <Typography fontWeight={700}>
+                    <Typography sx={{ fontWeight: 700 }}>
                       {formatOneDecimal(sector.totalPerimeterIndex)}
                     </Typography>
                   </Box>
