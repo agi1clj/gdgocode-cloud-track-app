@@ -110,9 +110,11 @@ export function DashboardHero({
         <Stack spacing={{ xs: 2.25, md: 3.5 }}>
           <Stack
             direction={{ xs: "column", md: "row" }}
-            justifyContent="space-between"
             spacing={1}
-            alignItems={{ xs: "flex-start", md: "center" }}
+            sx={{
+              justifyContent: "space-between",
+              alignItems: { xs: "flex-start", md: "center" }
+            }}
           >
             <Typography
               variant="overline"
@@ -120,7 +122,12 @@ export function DashboardHero({
             >
               GDGoCode Hackathon 2026
             </Typography>
-            <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+            <Stack
+              direction="row"
+              spacing={1}
+              useFlexGap
+              sx={{ flexWrap: "wrap" }}
+            >
               <Chip
                 icon={<PlaceRoundedIcon />}
                 label="Romania"
@@ -199,8 +206,11 @@ export function DashboardHero({
               <Stack
                 direction="row"
                 spacing={1.5}
-                alignItems="center"
-                sx={{ flexWrap: "wrap", display: { xs: "none", sm: "flex" } }}
+                sx={{
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  display: { xs: "none", sm: "flex" }
+                }}
               >
                 <Box
                   sx={{
@@ -347,11 +357,18 @@ export function DashboardHero({
                   <Stack
                     direction={{ xs: "column", sm: "row" }}
                     spacing={1.25}
-                    alignItems={{ xs: "flex-start", sm: "center" }}
-                    justifyContent="space-between"
-                    sx={{ position: "relative", zIndex: 1 }}
+                    sx={{
+                      alignItems: { xs: "flex-start", sm: "center" },
+                      justifyContent: "space-between",
+                      position: "relative",
+                      zIndex: 1
+                    }}
                   >
-                    <Stack direction="row" spacing={1.1} alignItems="center">
+                    <Stack
+                      direction="row"
+                      spacing={1.1}
+                      sx={{ alignItems: "center" }}
+                    >
                       <Box
                         sx={{
                           width: 12,
@@ -478,7 +495,9 @@ export function DashboardHero({
                             bgcolor: band.color
                           }}
                         />
-                        <Typography fontWeight={600}>{band.label}</Typography>
+                        <Typography sx={{ fontWeight: 600 }}>
+                          {band.label}
+                        </Typography>
                         <Typography variant="body2" color="text.secondary">
                           {band.range}
                         </Typography>
