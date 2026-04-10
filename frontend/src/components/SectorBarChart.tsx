@@ -99,7 +99,9 @@ export function SectorBarChart({ sectors }: { sectors: SectorTotal[] }) {
                       gap: 0.35
                     }}
                   >
-                    <Typography fontWeight={700}>{sector.sector}</Typography>
+                    <Typography sx={{ fontWeight: 700 }}>
+                      {sector.sector}
+                    </Typography>
                     <Typography variant="body2" color="text.secondary">
                       {formatOneDecimal(sector.totalPerimeterIndex)}
                     </Typography>

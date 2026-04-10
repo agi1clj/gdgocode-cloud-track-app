@@ -364,7 +364,12 @@ function App() {
                     starter app students can extend with maps, alerts, drones,
                     and response flows.
                   </Typography>
-                  <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    useFlexGap
+                    sx={{ flexWrap: "wrap" }}
+                  >
                     <Chip
                       label={eventName}
                       color="primary"

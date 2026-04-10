@@ -80,9 +80,8 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
       <CardContent>
         <Stack
           direction={{ xs: "column", md: "row" }}
-          justifyContent="space-between"
           spacing={1.5}
-          sx={{ mb: 1.5 }}
+          sx={{ mb: 1.5, justifyContent: "space-between" }}
         >
           <Box>
             <Typography
@@ -143,7 +142,7 @@ export function LineChart({ points }: { points: TimeSeriesPoint[] }) {
                   bgcolor: "primary.50"
                 }}
               >
-                <Typography fontWeight={700}>
+                <Typography sx={{ fontWeight: 700 }}>
                   {formatOneDecimal(activePoint.value)} index
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
